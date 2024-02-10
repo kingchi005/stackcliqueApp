@@ -9,70 +9,82 @@ export const UIStore = new Store({
 	showModules: true,
 });
 
-export const useUIStore = createStore<TUIStore>()(
+// AsyncStorage.clear();
+export const useIsInitialising = createStore<{
+	isInitialising: boolean;
+	setIsInitialising: (isInitialising: boolean) => void;
+}>((set) => ({
+	isInitialising: true,
+	setIsInitialising(isInitialising) {
+		set({ isInitialising });
+	},
+}));
+export const useUIStore = createStore<
+	TUIStore & { authenticate: () => void; toggleShowModules: () => void }
+>()(
 	persist(
 		(set, get) => ({
 			isAuthenticated: false,
 			showModules: true,
-			authenticate: () => set((st) => ({ isAuthenticated: true, ...st })),
+			authenticate: () => set((st) => ({ ...st, isAuthenticated: true })),
 			toggleShowModules: () =>
-				set((st) => ({ showModules: !st.showModules, ...st })),
+				set((st) => ({ ...st, showModules: !st.showModules })),
 		}),
 		{ name: "ui-store", storage: createJSONStorage(() => AsyncStorage) }
 	)
 );
-
 export const storeName = {
 	ALREADY_LAUNCHED: "already-Launched", // boolean
 	LOGIN_COUNT: "login-Count", // number
 	ONBOARDING: "@app:onboarding", //boolean
-};
+	AUTH_KEY: "access-token", // string
+} as const;
 
-export const useLauched = createStore<{
-	alreadyLaunched: boolean;
-	confirm: () => void;
-}>()(
-	persist(
-		(set) => ({
-			alreadyLaunched: false,
-			confirm: () => set(({}) => ({ alreadyLaunched: true })),
-		}),
-		{
-			name: storeName.ALREADY_LAUNCHED,
-			storage: createJSONStorage(() => AsyncStorage),
-		}
-	)
-);
-export const useLoginCount = createStore<{
-	alreadyLaunched: boolean;
-	confirm: () => void;
-}>()(
-	persist(
-		(set) => ({
-			alreadyLaunched: false,
-			confirm: () => set(({}) => ({ alreadyLaunched: true })),
-		}),
-		{
-			name: storeName.ALREADY_LAUNCHED,
-			storage: createJSONStorage(() => AsyncStorage),
-		}
-	)
-);
 export const useOnboarding = createStore<{
-	alreadyLaunched: boolean;
+	onboarded: 1 | 0;
 	confirm: () => void;
 }>()(
 	persist(
 		(set) => ({
-			alreadyLaunched: false,
-			confirm: () => set(({}) => ({ alreadyLaunched: true })),
+			onboarded: 0,
+			confirm: () => set({ onboarded: 1 }),
 		}),
 		{
-			name: storeName.ALREADY_LAUNCHED,
+			name: storeName.ONBOARDING,
 			storage: createJSONStorage(() => AsyncStorage),
 		}
 	)
 );
+// export const useLoginCount = createStore<{
+// 	alreadyLaunched: boolean;
+// 	confirm: () => void;
+// }>()(
+// 	persist(
+// 		(set) => ({
+// 			alreadyLaunched: false,
+// 			confirm: () => set({ alreadyLaunched: true }),
+// 		}),
+// 		{
+// 			name: storeName.ALREADY_LAUNCHED,
+// 			storage: createJSONStorage(() => AsyncStorage),
+// 		}
+// 	)
+// );
+// export const useOnboarding = createStore<{
+// 	alreadyLaunched: boolean;
+// 	confirm: () => void;
+// }>()(
+// 	persist(
+// 		(set) => ({
+// 			alreadyLaunched: false,
+// 			confirm: () => set(({}) => ({ alreadyLaunched: true })),
+// 		}),
+// 		{
+// 			name: storeName.ALREADY_LAUNCHED,
+// 			storage: createJSONStorage(() => AsyncStorage),
+// 		}
+// 	)
+// );
 /* 
 export const useLoginCount = (set) => ({
 	alreadyLaunched: false,

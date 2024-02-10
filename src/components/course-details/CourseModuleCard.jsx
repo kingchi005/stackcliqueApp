@@ -12,30 +12,40 @@ import { useNavigation } from "@react-navigation/native";
 import { theme } from "../theme/theme";
 import { Button, Avatar as _Avatar } from "../../components";
 import { AntDesign } from "@expo/vector-icons";
+import { Button as RnButton } from "react-native-paper";
 import { Avatar } from "react-native-paper";
+import { useCurrentCourse } from "../../store/courseStore";
 const course_icon = require("../../../assets/course-icon.jpeg");
 const course_cover = require("../../../assets/course-cover-img.png");
 
-export default function AvailableCourseCard({
-	showButton,
+export default function CourseModuleCard({
+	completed,
 	moduleNumber,
 	showRequiredLevel,
 	showCheckIcon,
-	course,
+	module,
+	enrolled,
+	index,
 }) {
 	const { width } = useWindowDimensions();
 	const navigation = useNavigation();
+	const updateCurrentIndex = useCurrentCourse((st) => st.setIndex);
+
 	const {
+		id: module_id,
+		name,
 		title,
-		id: course_id,
+		content,
 		cover_photo,
 		profile_photo,
-		about,
-		module,
-		required_user_level,
-	} = course;
+	} = module;
 	return (
-		<View style={[styles.container, { width: 0.9 * width }]}>
+		<View
+			style={[
+				styles.container,
+				{ width: 0.9 * width, paddingBottom: enrolled ? 5 : 90 },
+			]}
+		>
 			<ImageBackground
 				source={{ uri: cover_photo }}
 				resizeMode="cover"
@@ -73,11 +83,16 @@ export default function AvailableCourseCard({
 						/>
 					</View>
 				)}
-				<Text style={styles.title}>
-					{(() => {
-						let _ = title.split(" ");
-						return _.length < 5 ? _.join(" ") : _.slice(0, 3).join(" ") + "...";
-					})()}
+				<Text
+					style={{
+						textTransform: "uppercase",
+						textAlign: "center",
+						fontWeight: 700,
+						fontSize: 20,
+						marginBottom: 5,
+					}}
+				>
+					{title}
 				</Text>
 				<Text
 					style={{
@@ -87,9 +102,9 @@ export default function AvailableCourseCard({
 						lineHeight: 20,
 					}}
 				>
-					{about.length > 110 ? about.slice(0, 100) + "..." : about}
+					{content.length > 110 ? content.slice(0, 100) + "..." : content}
 				</Text>
-				{showRequiredLevel && (
+				{/* {showRequiredLevel && (
 					<Text
 						style={{
 							textAlign: "center",
@@ -99,30 +114,31 @@ export default function AvailableCourseCard({
 					>
 						Requirement: Level {required_user_level} and above
 					</Text>
-				)}
+				)} */}
 
-				{showButton && (
+				{enrolled && (
 					<View style={{ marginVertical: 14.08 }}>
 						<Button
-							onPress={() =>
-								navigation.navigate("Course-Details", { course_id, course })
-							}
+							onPress={() => {
+								updateCurrentIndex(index - 1);
+								navigation.navigate("Learning-screen", { module, index });
+							}}
 						>
 							Learn More
 						</Button>
 					</View>
 				)}
-				{moduleNumber && (
-					<Pressable
-						style={{
-							flexDirection: "row",
-							justifyContent: "center",
-							marginTop: 8,
-						}}
-					>
-						<Text style={{ color: theme.colors.green }}>Module 1</Text>
-					</Pressable>
-				)}
+
+				<Pressable
+					style={{
+						flexDirection: "row",
+						justifyContent: "center",
+						marginTop: 8,
+						paddingVertical: 10,
+					}}
+				>
+					<Text style={{ color: theme.colors.green }}>Module {index}</Text>
+				</Pressable>
 			</View>
 		</View>
 	);
@@ -130,28 +146,17 @@ export default function AvailableCourseCard({
 const styles = StyleSheet.create({
 	container: {
 		position: "relative",
-		// alignSelf: "center",
-		marginTop: 5,
+		alignSelf: "center",
 		borderWidth: 1,
 		borderColor: theme.colors.white + "44",
-		height: "80%",
+		minHeight: "auto",
 		borderRadius: 15.29008,
 		overflow: "hidden",
-		paddingBottom: 30,
-	},
-	title: {
-		textTransform: "uppercase",
-		textAlign: "center",
-		fontWeight: 700,
-		fontSize: 20,
-		marginBottom: 5,
-		flexWrap: "wrap",
+		marginTop: 28,
 	},
 	image: {
 		flex: 1,
 		borderRadius: 15.29008,
-		borderWidth: 1,
-		borderColor: theme.colors.white,
 		position: "absolute",
 		top: 0,
 		left: 0,
@@ -164,7 +169,6 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 30.57904,
 		borderTopLeftRadius: 30.57904,
 		marginTop: 80,
-		marginBottom: 0,
 		paddingHorizontal: 30.08,
 		paddingBottom: 8,
 	},

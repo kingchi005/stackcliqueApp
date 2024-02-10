@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, TextInput } from "react-native";
+import { ActivityIndicator, Text, TextInput, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { TailwindProvider } from "tailwindcss-react-native";
@@ -7,101 +7,85 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DrawerStack } from "./src/components/navigation/DrawerStack";
 import { AuthStack } from "./src/components/navigation/AuthStack";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
-import { UIStore, useLauched, useUIStore } from "./src/store/store";
+import {
+	UIStore,
+	storeName,
+	useOnboarding,
+	useUIStore,
+} from "./src/store/store";
 import { ScreenOrientation } from "expo";
-import * as SplashScreen from "expo-splash-screen";
-SplashScreen.preventAutoHideAsync();
+// import * as SplashScreen from "expo-splash-screen";
+import { useAccessToken, useUserStore } from "./src/store/userStore";
+import { PaperProvider } from "react-native-paper";
+import { SplashScreen } from "./src/screens";
+import { getUserDetails } from "./src/services/authService";
 
 export default function App() {
 	Text.defaultProps = Text.defaultProps || {};
 	Text.defaultProps.maxFontSizeMultiplier = 1.2;
 	TextInput.defaultProps = Text.defaultProps || {};
 	TextInput.defaultProps.maxFontSizeMultiplier = 1.2;
-	const [isFirstLaunch, setFirstLaunch] = useState(null); // Initialize isFirstLaunch to null
-	const _isAuthenticated = UIStore.useState((state) => state.isAuthenticated);
+	// const [onBoarded, setOnBoarded] = useState(false);
+	// const [accessToken, setAccessToken] = useState(null);
+	const [isInitialising, setIsInitialising] = useState(true);
 
-	const hasAlreadyLauched = useLauched((st) => st.alreadyLaunched);
-	const confirmLauched = useLauched((st) => st.confirm);
-	const isAuthenticated = useUIStore((st) => st.isAuthenticated);
+	const onBoarded = useOnboarding((st) => st.onboarded);
+	const accessToken = useAccessToken((st) => st.token);
+	const updateUserDetails = useUserStore((st) => st.update);
+	const userId = useUserStore((st) => st.id);
 
-	// useEffect(() => {
-	// }, []);
+	const confirmLauched = useOnboarding((st) => st.confirm);
+
+	useEffect(() => {
+		// fetchUserDetails();
+	}, []);
 
 	setTimeout(() => {
-		SplashScreen.hideAsync();
-	}, 1000);
+		setIsInitialising(false);
+	}, 2000);
 
-	// const checkIfFirstLaunch = async () => {
-	// 	try {
-	// if (hasAlreadyLauched) {
-	// 	// If it's the first launch, set alreadyLaunched to true
-	// 	// confirmLauched();
-	// 	setFirstLaunch(3000); // Set isFirstLaunch to 3 for showing the OnboardingScreen three times
-	// } else {
-	// 	// If not the first launch, check the login count
-	// 	const loginCount = await AsyncStorage.getItem("loginCount");
-	// 	if (loginCount === null) {
-	// 		// If loginCount is null (first login), set it to 1
-	// 		await AsyncStorage.setItem("loginCount", "1");
-	// 	} else {
-	// 		// Increment the login count and check if it's greater than 3
-	// 		const count = parseInt(loginCount, 10) + 1;
-	// 		await AsyncStorage.setItem("loginCount", count.toString());
-	// 		if (count > 3000) {
-	// 			// If login count is greater than 3, mark onboarding as finished
-	// 			setFirstLaunch(false);
-	// 			// Lock the screen orientation to portrait mode
-	// 			await ScreenOrientation.lockAsync(
-	// 				ScreenOrientation.OrientationLock.PORTRAIT
-	// 			);
-	// 			return;
-	// 		}
-	// 	}
-	// 	setFirstLaunch(true);
-	// }
-	// 	} catch (error) {
-	// 		console.error("Error reading from AsyncStorage:", error);
-	// 	}
-	// };
-
-	const handleOnboardingFinish = async () => {
-		// Called when onboarding is finished, decrement the isFirstLaunch count
-		confirmLauched();
-
-		// If the count is now 0, mark onboarding as finished and lock the screen orientation
-		if (isFirstLaunch === 1) {
-			setFirstLaunch(false);
-			await ScreenOrientation.lockAsync(
-				ScreenOrientation.OrientationLock.PORTRAIT
-			);
+	// console.log("onBoarded:", onBoarded);
+	// console.log("accessToken:", accessToken);
+	const fetchUserDetails = async () => {
+		if (userId) {
+			const _userDetails = await getUserDetails(userId);
+			if (!_userDetails.ok) {
+				setIsLoading(false);
+				return Alert.alert(
+					"Could not fetch details",
+					"check your internet connection"
+				);
+			}
+			updateUserDetails(_userDetails.data);
 		}
+	};
+	const handleOnboardingFinish = async () => {
+		confirmLauched();
+		// setOnBoarded(true);
 	};
 
 	const handleSkip = async () => {
-		setFirstLaunch(false); // Mark onboarding as finished
-		// Unlock the screen orientation to allow rotation
-		await ScreenOrientation.unlockAsync();
+		confirmLauched();
+		// setOnBoarded(true);
 	};
 
-	// if (isFirstLaunch === null) {
-	// 	// Return a loading screen or any other component while checking the isFirstLaunch state
-	// 	// You can return a loader, splash screen, etc. here
-	// 	return null;
-	// } else
-
-	if (hasAlreadyLauched) {
-		return (
-			<TailwindProvider>
-				<StatusBar style="auto" />
-				<NavigationContainer>
-					{isAuthenticated ? <DrawerStack /> : <AuthStack />}
-				</NavigationContainer>
-			</TailwindProvider>
+	if (isInitialising) return null; // <SplashScreen />;
+	else
+		return !onBoarded ? (
+			<NavigationContainer>
+				<OnboardingScreen
+					onFinish={handleOnboardingFinish}
+					onSkip={handleSkip}
+				/>
+			</NavigationContainer>
+		) : (
+			<PaperProvider>
+				<TailwindProvider>
+					<StatusBar style="auto" />
+					<NavigationContainer>
+						{accessToken ? <DrawerStack /> : <AuthStack />}
+					</NavigationContainer>
+				</TailwindProvider>
+			</PaperProvider>
 		);
-	}
-	return (
-		<NavigationContainer>
-			<OnboardingScreen onFinish={handleOnboardingFinish} onSkip={handleSkip} />
-		</NavigationContainer>
-	);
 }
