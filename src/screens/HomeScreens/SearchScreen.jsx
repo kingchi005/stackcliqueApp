@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList, Alert } from "react-native";
 import React from "react";
-import { SearchBar, SearchResultContainer } from "../../components";
+import { SearchBar as __, SearchResultContainer } from "../../components";
 import { useState } from "react";
 import api from "../../services";
 import { searchCourse } from "../../services/courseService";
+import { Searchbar } from "react-native-paper";
+import { ScrollView } from "react-native-gesture-handler";
 
 const dummyData = [
 	{
@@ -38,27 +40,50 @@ export default function SearchScreen() {
 	 */
 	const initCourses = [];
 	const [searchValue, setSearchValue] = useState("");
-	const [searchResult, setSearchResult] = useState(initCourses);
+	/**@type {[searchResult:TSearchedCourse[];setSearchResult:()=>void]} */
+	const [searchResult, setSearchResult] = useState([]);
 	const handleSearch = async () => {
-		const courses = await searchCourse(searchValue);
-		console.log(courses);
-		setSearchResult(courses);
+		const res = await searchCourse(searchValue);
+		if (!res.ok) {
+			if (res.error.message !== "No result found")
+				return Alert.alert("Could not search", res.error.message);
+			else return setSearchResult([]);
+		}
+		// console.log(courses);
+		setSearchResult(res.data);
 	};
+	// console.log(searchResult);
 	return (
 		<View style={{}}>
-			<SearchBar
+			{/* <SearchBar
 				value={searchValue}
 				handleSearch={() => handleSearch()}
 				onChange={(value) => setSearchValue(value)}
+			/> */}
+
+			<Searchbar
+				onChangeText={setSearchValue}
+				onSubmitEditing={handleSearch}
+				style={{ marginTop: 10, marginHorizontal: 10, borderRadius: 10 }}
 			/>
 
-			{searchValue.length > 0 && (
+			{searchResult.length > 0 ? (
 				<FlatList
 					data={searchResult}
 					renderItem={({ item }) => <SearchResultContainer {...item} />}
-					keyExtractor={(item) => item.id}
+					keyExtractor={(item, i) => i}
 					style={styles.flatListContainer}
 				/>
+			) : (
+				<View
+					style={{
+						flexDirection: "row",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<Text>No result found</Text>
+				</View>
 			)}
 		</View>
 	);

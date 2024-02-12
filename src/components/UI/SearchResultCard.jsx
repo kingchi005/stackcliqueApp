@@ -1,8 +1,9 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import Avatar from "./Avatar";
+import _Avatar from "./Avatar";
 import { theme } from "../theme/theme";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Avatar } from "react-native-paper";
 
 const imgArr = [
 	require("../../../assets/images-from-figma/vs-code-img.png"),
@@ -17,15 +18,14 @@ const imgArr = [
 export default function SearchResultCard({ title, profile_photo, _count }) {
 	return (
 		<View style={styles.container}>
-			<View>
-				<Avatar
-					uri={imgArr[Math.random() < 0.5 ? 0 : 1]}
-					size={70}
-					borderRadius={10}
-				/>
-			</View>
+			<Avatar.Image
+				source={{ uri: profile_photo }}
+				size={50}
+				style={{ borderRadius: 10, marginHorizontal: 10 }}
+			/>
+
 			<View style={{ flex: 1 }}>
-				<Text style={{ fontWeight: 600, fontSize: 18 }}>{title}</Text>
+				<Text style={{ fontWeight: 600, fontSize: 16 }}>{title}</Text>
 				<View style={{ marginTop: "auto" }}>
 					<View
 						style={{
@@ -37,7 +37,7 @@ export default function SearchResultCard({ title, profile_photo, _count }) {
 						<View
 							style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
 						>
-							<FontAwesome name="star-o" color={"yellow"} size={20} />
+							<FontAwesome name="star-o" color={"yellow"} size={10} />
 							<Text style={{ color: theme.colors.grey, fontSize: 10 }}>
 								{4}
 							</Text>
@@ -51,7 +51,7 @@ export default function SearchResultCard({ title, profile_photo, _count }) {
 						>
 							<Ionicons
 								name="person-outline"
-								size={20}
+								size={10}
 								color={theme.colors.grey}
 							/>
 							<Text style={{ color: theme.colors.grey, fontSize: 10 }}>
@@ -68,6 +68,8 @@ export default function SearchResultCard({ title, profile_photo, _count }) {
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
 		paddingVertical: 8,
 		backgroundColor: theme.colors.white,
 		borderRadius: 10,

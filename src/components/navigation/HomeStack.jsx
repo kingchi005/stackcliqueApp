@@ -43,6 +43,7 @@ export const HomeStack = () => (
 				headerTitle: (props) => <CustomHeader {...props} />,
 				headerLeft: () => null,
 				headerBackVisible: false,
+				presentation: "fullScreenModal",
 			}}
 		/>
 		<Stack.Screen

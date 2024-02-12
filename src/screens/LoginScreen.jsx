@@ -45,7 +45,6 @@ const LoginScreen = () => {
 			values.Password?.trim() !== ""
 		);
 	};
-
 	// Function to handle form submission
 	const saveToken = useAccessToken((st) => st.update);
 	const updateUserId = useUserStore((st) => st.updateId);

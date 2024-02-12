@@ -48,7 +48,9 @@ export const loginUser = async ({
 			method: "post",
 			headers: { "Content-Type": "application/json" },
 		});
+		console.log(_res);
 		const res = await _res.json();
+		console.log(res);
 		return res;
 	} catch (error) {
 		console.log(error);
