@@ -26,6 +26,7 @@ export default function CourseModuleCard({
 	module,
 	enrolled,
 	index,
+	course_title,
 }) {
 	const { width } = useWindowDimensions();
 	const navigation = useNavigation();
@@ -121,7 +122,11 @@ export default function CourseModuleCard({
 						<Button
 							onPress={() => {
 								updateCurrentIndex(index - 1);
-								navigation.navigate("Learning-screen", { module, index });
+								navigation.navigate("Learning-screen", {
+									module,
+									index,
+									title: course_title,
+								});
 							}}
 						>
 							Learn More

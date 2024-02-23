@@ -7,7 +7,7 @@ import CourseModuleCard from "../course-details/CourseModuleCard";
  * @param {{modules:TCourseModule}} param0
  * @returns
  */
-const CourseModules = ({ modules, enrolled }) => {
+const CourseModules = ({ modules, enrolled, course_title }) => {
 	const { width } = useWindowDimensions();
 	return (
 		<ScrollView
@@ -24,6 +24,7 @@ const CourseModules = ({ modules, enrolled }) => {
 		>
 			{modules.map((module, key) => (
 				<CourseModuleCard
+					course_title={course_title}
 					enrolled={enrolled}
 					module={module}
 					index={key + 1}

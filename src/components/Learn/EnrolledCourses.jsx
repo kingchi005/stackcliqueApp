@@ -174,6 +174,7 @@ export default function EnrolledCourses() {
 							navigation.navigate("Course-Details", {
 								course_id,
 								enrolled: true,
+								title,
 							})
 						}
 					>

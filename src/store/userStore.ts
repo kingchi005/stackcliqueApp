@@ -43,7 +43,9 @@ export const useAccessToken = create<{
 }>()(
 	persist((set) => ({ token: "", update: (token) => set({ token }) }), {
 		name: storeName.AUTH_KEY,
-		storage: createJSONStorage(() => ({
+
+		storage: createJSONStorage(() => AsyncStorage),
+		/* 		storage: createJSONStorage(() => ({
 			async getItem(name) {
 				return await SecureStorage.getItemAsync(name);
 			},
@@ -54,5 +56,6 @@ export const useAccessToken = create<{
 				await SecureStorage.deleteItemAsync(name);
 			},
 		})),
+ */
 	})
 );

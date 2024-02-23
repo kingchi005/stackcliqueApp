@@ -105,7 +105,11 @@ export default function AvailableCourseCard({
 					<View style={{ marginVertical: 14.08 }}>
 						<Button
 							onPress={() =>
-								navigation.navigate("Course-Details", { course_id, course })
+								navigation.navigate("Course-Details", {
+									course_id,
+									course,
+									title,
+								})
 							}
 						>
 							Learn More

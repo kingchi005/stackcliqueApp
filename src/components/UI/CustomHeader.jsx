@@ -4,7 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { theme } from "../theme/theme";
-import { TouchableRipple } from "react-native-paper";
+import { Appbar, TouchableRipple } from "react-native-paper";
+
 export default function CustomHeader({ children }) {
 	const navigation = useNavigation();
 	return (
@@ -28,6 +29,44 @@ export default function CustomHeader({ children }) {
 	);
 }
 
+/**@param {import("@react-navigation/native-stack").NativeStackHeaderProps} param0  */
+export function CourseHeader({ route, navigation }) {
+	return (
+		<Appbar.Header>
+			<TouchableRipple
+				onPress={() => navigation.goBack()}
+				style={{
+					padding: 3,
+					borderRadius: 20,
+					flexDirection: "row",
+					alignItems: "center",
+				}}
+			>
+				<Ionicons
+					style={{ position: "absolute", left: 5 }}
+					name="chevron-back-outline"
+					size={24}
+					color={theme.colors.grey}
+				/>
+			</TouchableRipple>
+			<View
+				style={{
+					flex: 1,
+					flexDirection: "row",
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<Text style={styles.headerText}>
+					{(() => {
+						const _ = route.params?.title?.split(" ");
+						return _.length > 4 ? _.slice(0, 3).join(" ") + "..." : _.join(" ");
+					})()}
+				</Text>
+			</View>
+		</Appbar.Header>
+	);
+}
 const styles = StyleSheet.create({
 	container: {
 		position: "relative",

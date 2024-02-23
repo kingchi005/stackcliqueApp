@@ -201,13 +201,15 @@ const SignUpScreen = () => {
 							style={{ bottom: 5 }}
 							activeOpacity={0.5}
 						>
-							<Text style={{ color: "#7E0772" }}>Terms & Conditions</Text>
+							<Text style={{ color: "#7E0772", marginStart: 5 }}>
+								Terms & Conditions
+							</Text>
 						</TouchableOpacity>
 					</View>
 
 					{/* Sign Up button */}
 					<Button
-						style={{ marginTop: 40 }}
+						style={{ marginTop: 20 }}
 						disabled={isLoading}
 						textColor="#ccc"
 						contentStyle={{
@@ -230,30 +232,11 @@ const SignUpScreen = () => {
 						</Text>
 					</Button>
 
-					{/* <TouchableOpacity
-						activeOpacity={0.8}
-						onPress={handleSubmit(onSubmit)}
-						style={{
-							marginTop: 50,
-							backgroundColor: isChecked ? "#7E0772" : "#CCCCCC",
-							paddingVertical: 15,
-							borderRadius: 50,
-							alignItems: "center",
-							padding: 10,
-						}}
-						disabled={!isChecked}
-					>
-						<Text style={{ fontSize: 15, fontWeight: "500", color: "#FFFFFF" }}>
-							Sign Up
-						</Text>
-					</TouchableOpacity> */}
-
-					{/* LogIn link */}
 					<View
-						style={{ alignSelf: "center", marginTop: 50, flexDirection: "row" }}
+						style={{ alignSelf: "center", marginTop: 20, flexDirection: "row" }}
 					>
 						<Text style={{ fontSize: 15, fontWeight: "700", color: "black" }}>
-							Already have an account?{" "}
+							Already have an account?
 						</Text>
 						<TouchableOpacity
 							activeOpacity={0.8}
@@ -263,7 +246,12 @@ const SignUpScreen = () => {
 							}}
 						>
 							<Text
-								style={{ fontSize: 15, fontWeight: "500", color: "#7E0772" }}
+								style={{
+									fontSize: 15,
+									fontWeight: "500",
+									color: "#7E0772",
+									marginStart: 5,
+								}}
 							>
 								Click here to LogIn
 							</Text>

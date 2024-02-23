@@ -22,7 +22,7 @@ export default function AboutCourse({ about }) {
 					{about}
 				</Text>
 			</View>
-			<Pressable onPress={() => setIsExpanded((prev) => !prev)}>
+			{/* <Pressable onPress={() => setIsExpanded((prev) => !prev)}>
 				{isExpanded ? (
 					<View
 						style={{
@@ -50,7 +50,7 @@ export default function AboutCourse({ about }) {
 						/>
 					</View>
 				)}
-			</Pressable>
+			</Pressable> */}
 		</View>
 	);
 }

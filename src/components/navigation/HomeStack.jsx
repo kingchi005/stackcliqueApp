@@ -13,6 +13,7 @@ import { CustomHeader } from "../../components";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ChatScreen from "../../screens/ChatScreen";
 import ChatHeader from "../UI/ChatHeader";
+import { CourseHeader } from "../UI/CustomHeader";
 
 const Stack = createNativeStackNavigator();
 const TopTab = createMaterialTopTabNavigator();
@@ -43,6 +44,7 @@ export const HomeStack = () => (
 			component={SearchScreen}
 			options={{
 				headerTitle: (props) => <CustomHeader {...props} />,
+				// header: (props) => <CustomHeader {...props} />,
 				headerLeft: () => null,
 				headerBackVisible: false,
 				presentation: "fullScreenModal",
@@ -52,7 +54,8 @@ export const HomeStack = () => (
 			name="Course-Details"
 			component={CourseDetailsScreen}
 			options={{
-				headerTitle: (props) => <CustomHeader {...props} />,
+				// headerTitle: (props) => <CustomHeader {...props} />,
+				header: (props) => <CourseHeader {...props} />,
 				title: "Course Details",
 				headerLeft: () => null,
 				headerBackVisible: false,
@@ -62,8 +65,9 @@ export const HomeStack = () => (
 			name="Learning-screen"
 			component={LearningScreen}
 			options={{
-				headerTitle: (props) => <CustomHeader {...props} />,
-				title: "Introduction to vs code",
+				// headerTitle: (props) => <CustomHeader {...props} />,
+				header: (props) => <CourseHeader {...props} />,
+				// title: "Introduction to vs code",
 				headerLeft: () => null,
 				headerBackVisible: false,
 			}}
