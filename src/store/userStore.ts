@@ -4,29 +4,32 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { storeName } from "./store";
 
 type TUserStore = TUser & {
-	update: (user: TUser) => void;
-	updateId: (id: string) => void;
+	update(user: TUser): void;
+	resetUser(): void;
 };
 
 // AsyncStorage.clear();
 
+const initialState: TUser = {
+	id: "",
+	email: "",
+	username: "",
+	cover_photo: "",
+	enrolled_courses: [],
+	notifications: [],
+	level: 0,
+	profile_photo: "",
+};
+
 export const useUserStore = create<TUserStore>()(
 	persist(
 		(set) => ({
-			id: "",
-			email: "",
-			username: "",
-			password: "",
-			cover_photo: "",
-			enrolled_courses: [],
-			notifications: [],
-			level: 0,
-			profile_photo: "",
+			...initialState,
 			update(user) {
-				set((prev) => ({ ...user, id: prev.id }));
+				set(user);
 			},
-			updateId(id) {
-				set((prev) => ({ ...prev, id }));
+			resetUser() {
+				set(initialState);
 			},
 		}),
 		{ name: "user-db", storage: createJSONStorage(() => AsyncStorage) }

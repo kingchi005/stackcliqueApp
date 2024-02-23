@@ -2,11 +2,34 @@ type TUIStore = {
 	isAuthenticated: boolean;
 	showModules: boolean;
 };
+type TChannel = {
+	id: string;
+	name: string;
+	profile_photo: string;
+	required_user_level: number;
+	created_at: Date;
+	members: TUser[];
+	chatsMessages: TChat[];
+	_count: {
+		members: number;
+	};
+};
+
+type TChat = {
+	sender: {
+		profile_photo: string | null;
+		username: string;
+	};
+	id: string;
+	sender_id: string;
+	message: string;
+	channel_id: string;
+	created_at: Date;
+};
 
 type TUser = {
 	id: string;
 	email: string;
-	// password: string;
 	username: string;
 	level: 0;
 	notifications: any[];

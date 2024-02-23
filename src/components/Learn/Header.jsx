@@ -116,9 +116,7 @@ export default function Header({ state, navigation }) {
 						EARN
 					</Text>
 				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => handleTabNavigationOnPress(2, "Connect")}
-				>
+				<TouchableOpacity onPress={() => nativenav.navigate("Connect-stack")}>
 					<Text
 						style={[
 							styles.headerItem,
@@ -153,7 +151,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		width: "100%",
-		paddingHorizontal: 4,
+		paddingHorizontal: 5,
+		paddingEnd: 15,
 		justifyContent: "space-around",
 		backgroundColor: theme.colors.white,
 		paddingTop: 25,

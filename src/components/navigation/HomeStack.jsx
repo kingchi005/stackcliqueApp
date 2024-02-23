@@ -11,6 +11,8 @@ import {
 import Header from "../Learn/Header";
 import { CustomHeader } from "../../components";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ChatScreen from "../../screens/ChatScreen";
+import ChatHeader from "../UI/ChatHeader";
 
 const Stack = createNativeStackNavigator();
 const TopTab = createMaterialTopTabNavigator();
@@ -23,7 +25,7 @@ function HomeTabs() {
 		>
 			<TopTab.Screen name="Learn" component={LearnScreen} />
 			<TopTab.Screen name="Earn" component={EarnScreen} />
-			<TopTab.Screen name="Connect" component={ConnectScreen} />
+			{/* <TopTab.Screen name="Connect" component={ConnectScreen} /> */}
 			{/* <TopTab.Screen name="Notification" component={NotificationScreen} /> */}
 		</TopTab.Navigator>
 	);

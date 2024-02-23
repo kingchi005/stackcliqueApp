@@ -19,6 +19,8 @@ import { theme } from "../components/theme/theme";
 import { getCourseDetails } from "../services/courseService";
 import { ActivityIndicator } from "react-native-paper";
 import { useCurrentCourse } from "../store/courseStore";
+import { Ionicons } from "@expo/vector-icons";
+import { useCacheStore } from "../store/cacheStore";
 
 export default function CourseDetailsScreen() {
 	/**@type {[boolean,React.Dispatch<React.SetStateAction<boolean>>]} */
@@ -36,12 +38,25 @@ export default function CourseDetailsScreen() {
 		fetchCourseDetails();
 	}, []);
 	const fetchCourseDetails = async () => {
+		// get from cache here
+		const _data = useCacheStore.getState().getcourse(course_id);
+		// console.log(_data);
+		if (_data) {
+			setIsLoading(false);
+			setCourseDetails(_data);
+			return;
+		}
+
+		setIsLoading(true);
 		const res = await getCourseDetails(course_id);
 		if (!res.ok) {
 			setIsLoading(false);
-			return Alert.alert("Failed to get course details", res.error.message);
+			return;
+			Alert.alert("Failed to get course details", res.error.message);
 		}
 
+		// cache here
+		useCacheStore.getState().cacheCourse(res.data);
 		setCourseDetails(res.data);
 		setCurModules(res.data.module);
 		setIsLoading(false);
@@ -63,6 +78,7 @@ export default function CourseDetailsScreen() {
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
+					<Ionicons name="trail-sign" size={100} />
 					<Text style={{ color: theme.colors.grey }}>
 						Please check your internet connection and try again
 					</Text>

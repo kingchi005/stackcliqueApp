@@ -18,7 +18,7 @@ export default function CoursesScreen() {
 	const { bottom } = useSafeAreaInsets();
 	const { width, fontScale } = useWindowDimensions();
 	return (
-		<View style={{ margin: 10 }}>
+		<View style={{ margin: 10, flex: 1 }}>
 			<Searchbar onFocus={() => navigation.navigate("Search")} />
 			{/* <ScrollView
 				style={{ marginVertical: 20 }}
@@ -73,7 +73,7 @@ export default function CoursesScreen() {
 					))}
 				</View>
 
-				{[1, 2, 3, 4, 5, 443, 53, 4, 35].map((it, i) => (
+				{[1, 2, 3, 4, 5, 443, 53, 4, 35].map((course, i) => (
 					<View
 						key={i}
 						style={{

@@ -1,5 +1,5 @@
 import { BASE_URL } from ".";
-import { useAccessToken } from "../store/userStore";
+import { useAccessToken, useUserStore } from "../store/userStore";
 
 const API_KEY = useAccessToken.getState().token;
 
@@ -48,9 +48,9 @@ export const loginUser = async ({
 			method: "post",
 			headers: { "Content-Type": "application/json" },
 		});
-		console.log(_res);
+		// console.log(JSON.stringify(_res.headers.get("ori"), null, 2));
 		const res = await _res.json();
-		console.log(res);
+		// console.log(res);
 		return res;
 	} catch (error) {
 		console.log(error);
@@ -73,4 +73,9 @@ export const getUserDetails = async (
 		console.log(error);
 		return { ok: false, error: { message: error.message, details: error } };
 	}
+};
+
+export const logoutUser = () => {
+	useAccessToken.getState().update("");
+	useUserStore.getState().resetUser();
 };

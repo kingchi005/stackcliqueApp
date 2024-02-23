@@ -37,7 +37,7 @@ export default function SearchResultCard({ title, profile_photo, _count }) {
 						<View
 							style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
 						>
-							<FontAwesome name="star-o" color={"yellow"} size={10} />
+							<FontAwesome name="star-o" color={"yellow"} size={15} />
 							<Text style={{ color: theme.colors.grey, fontSize: 10 }}>
 								{4}
 							</Text>
@@ -51,7 +51,7 @@ export default function SearchResultCard({ title, profile_photo, _count }) {
 						>
 							<Ionicons
 								name="person-outline"
-								size={10}
+								size={15}
 								color={theme.colors.grey}
 							/>
 							<Text style={{ color: theme.colors.grey, fontSize: 10 }}>
