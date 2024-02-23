@@ -79,3 +79,9 @@ export const logoutUser = () => {
 	useAccessToken.getState().update("");
 	useUserStore.getState().resetUser();
 };
+
+export const refreshController = async () => {
+	// refetch user details
+	const userDetails = getUserDetails;
+	// refetch courses
+};

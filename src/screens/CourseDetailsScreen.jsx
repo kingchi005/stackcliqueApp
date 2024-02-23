@@ -74,22 +74,20 @@ export default function CourseDetailsScreen() {
 					<ActivityIndicator size={35} />
 				</View>
 			)}
-			{!courseDetails && !isLoading && (
-				<View
-					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+			{/* {!courseDetails && !isLoading && ( */}
+			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+				<Ionicons name="wifi" size={150} color={"#24242433"} />
+				<Text style={{ color: theme.colors.grey }}>
+					Please check your internet connection and try again
+				</Text>
+				<RnButton
+					style={{ borderRadius: 5 }}
+					onPress={() => fetchCourseDetails()}
 				>
-					<Ionicons name="trail-sign" size={100} />
-					<Text style={{ color: theme.colors.grey }}>
-						Please check your internet connection and try again
-					</Text>
-					<RnButton
-						style={{ borderRadius: 5 }}
-						onPress={() => fetchCourseDetails()}
-					>
-						Retry
-					</RnButton>
-				</View>
-			)}
+					Retry
+				</RnButton>
+			</View>
+			{/* )} */}
 			{courseDetails && (
 				<>
 					<ScrollView style={{ top: 0 }} showsVerticalScrollIndicator={false}>

@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
 		marginTop: 5,
 		borderWidth: 1,
 		borderColor: theme.colors.white + "44",
-		height: "80%",
+		height: "100%",
 		borderRadius: 15.29008,
 		overflow: "hidden",
 		paddingBottom: 30,

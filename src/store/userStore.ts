@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { storeName } from "./store";
+import SecureStorage from "expo-secure-store";
 
 type TUserStore = TUser & {
 	update(user: TUser): void;
@@ -42,6 +43,16 @@ export const useAccessToken = create<{
 }>()(
 	persist((set) => ({ token: "", update: (token) => set({ token }) }), {
 		name: storeName.AUTH_KEY,
-		storage: createJSONStorage(() => AsyncStorage),
+		storage: createJSONStorage(() => ({
+			async getItem(name) {
+				return await SecureStorage.getItemAsync(name);
+			},
+			async setItem(name, value) {
+				await SecureStorage.setItemAsync(name, value);
+			},
+			async removeItem(name) {
+				await SecureStorage.deleteItemAsync(name);
+			},
+		})),
 	})
 );
