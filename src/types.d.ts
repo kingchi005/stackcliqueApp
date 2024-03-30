@@ -112,8 +112,3 @@ type TApiResponse<D = unknown> =
 			error: { message: string; details: unknown };
 	  }
 	| { ok: true; message: string; data: D };
-
-type TWsl = {
-	name:string;
-	age:number
-}

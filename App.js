@@ -15,6 +15,7 @@ import {
 } from "./src/store/store";
 import { ScreenOrientation } from "expo";
 // import * as SplashScreen from "expo-splash-screen";
+// to be deleted
 import { useAccessToken, useUserStore } from "./src/store/userStore";
 import { PaperProvider } from "react-native-paper";
 import { SplashScreen } from "./src/screens";
