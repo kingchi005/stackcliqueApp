@@ -12,14 +12,26 @@ import { theme } from "../components/theme/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useCourseList } from "../store/courseStore";
 
 export default function CoursesScreen() {
 	const navigation = useNavigation();
+
 	const { bottom } = useSafeAreaInsets();
 	const { width, fontScale } = useWindowDimensions();
+	const courses = useCourseList.getState().courseList;
+	// console.log(JSON.stringify(courses, null, 2));
 	return (
 		<View style={{ margin: 10, flex: 1 }}>
-			<Searchbar onFocus={() => navigation.navigate("Search")} />
+			<Searchbar
+				onFocus={() =>
+					navigation.navigate("Home", {
+						screen: "Search",
+						initial: false,
+						merge: true,
+					})
+				}
+			/>
 			{/* <ScrollView
 				style={{ marginVertical: 20 }}
 				horizontal
@@ -73,11 +85,11 @@ export default function CoursesScreen() {
 					))}
 				</View>
 
-				{[1, 2, 3, 4, 5, 443, 53, 4, 35].map((course, i) => (
+				{courses.map((course, i) => (
 					<View
 						key={i}
 						style={{
-							width: width * 0.459,
+							width: width * 0.45,
 						}}
 					>
 						<Card
@@ -89,7 +101,7 @@ export default function CoursesScreen() {
 						>
 							<Card.Cover
 								style={{ height: 100 }}
-								source={require("../../assets/images-from-figma/css-img.jpg")}
+								source={{ uri: course.cover_photo }}
 							/>
 							<Card.Content style={{ padding: 0, marginTop: 10 }}>
 								<Text
@@ -100,7 +112,7 @@ export default function CoursesScreen() {
 										fontWeight: "600",
 									}}
 								>
-									Web Development FrontEnd FUll Course
+									{course.title}
 								</Text>
 								<Text style={{ color: theme.colors.grey, fontSize: 11.5 }}>
 									Instructor: Aguwanmi Ent.
@@ -114,19 +126,27 @@ export default function CoursesScreen() {
 								>
 									<View>
 										<Text style={{ color: theme.colors.grey, fontSize: 10 }}>
-											<Ionicons
-												name="star-outline"
-												color={"yellow"}
-												size={10}
-											/>
-											4.9: (13.5k reviews)
+											<Ionicons name="star-half" color={"yellow"} size={10} />
+											4.9: ({course._count.reviews} reviews)
 										</Text>
 										<Text style={{ color: theme.colors.grey, fontSize: 10 }}>
 											<Ionicons name="person-outline" size={10} />
-											120k students enrolled
+											{course._count.enrollement} students enrolled
 										</Text>
 									</View>
 									<IconButton
+										onPress={() => {
+											navigation.navigate("Home", {
+												screen: "Course-Details",
+												params: {
+													course_id: course.id,
+													course,
+													title: course.title,
+												},
+												initial: false,
+												merge: true,
+											});
+										}}
 										icon={() => (
 											<Ionicons
 												size={35}

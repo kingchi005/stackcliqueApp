@@ -2,7 +2,6 @@ import io from "socket.io-client";
 import { useAccessToken, useUserStore } from "../store/userStore";
 import { BASE_URL, SOCKET_URL } from ".";
 import { useSocket } from "./../store/socketStore";
-const user_id = useUserStore.getState().id;
 
 export const getSocket = () => {
 	const token = useAccessToken.getState().token; // Retrieve jwt token from local storage or cookie
@@ -33,6 +32,8 @@ export const getChannel = async (): Promise<TApiResponse<TChannel>> => {
 	}
 };
 export const getChannelErolled = async (): Promise<TApiResponse<TChannel>> => {
+	const user_id = useUserStore.getState().id;
+
 	try {
 		const res = await (
 			await fetch(`${BASE_URL}/connect/channels/${user_id}`)

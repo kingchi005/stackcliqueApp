@@ -44,6 +44,7 @@ export default function ConnectScreen() {
 		setError(null);
 		setIsFetching(true);
 		const _res = await getChannelErolled();
+		// console.log(_res);
 
 		if (!_res.ok) {
 			setIsFetching(false);

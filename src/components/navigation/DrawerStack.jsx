@@ -14,7 +14,13 @@ import { DrawerActions, useNavigation } from "@react-navigation/native";
 import ProfileStack from "./ProfileStack";
 import { Ionicons } from "@expo/vector-icons";
 import { theme } from "../theme/theme";
-import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import {
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+	useWindowDimensions,
+} from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import { logoutUser } from "../../services/authService";
 
@@ -26,7 +32,9 @@ function CustomDrawerContent(props) {
 	const saveToken = useAccessToken((st) => st.update);
 	const handleLogout = () => {
 		navigation.dispatch(DrawerActions.closeDrawer());
-		logoutUser();
+		setTimeout(() => {
+			logoutUser();
+		}, 900);
 	};
 
 	const user_avatar = useUserStore.getState().profile_photo;
@@ -34,20 +42,22 @@ function CustomDrawerContent(props) {
 		<DrawerContentScrollView {...props}>
 			<View style={{ flex: 1, paddingHorizontal: 10 }}>
 				<View style={styles.drawerPrepend}>
-					{user_avatar ? (
-						<Avatar.Image size={100} source={{ uri: user_avatar }} />
-					) : (
-						<Ionicons
-							color={theme.colors.background}
-							style={{
-								color: theme.colors.grey,
-								marginTop: 20,
-							}}
-							// style={{ backfaceVisibility: theme.colors. }}
-							size={100}
-							name="person-circle"
-						/>
-					)}
+					<Pressable onPress={() => navigation.navigate("Profile-stack")}>
+						{user_avatar ? (
+							<Avatar.Image size={100} source={{ uri: user_avatar }} />
+						) : (
+							<Ionicons
+								color={theme.colors.background}
+								style={{
+									color: theme.colors.grey,
+									marginTop: 20,
+								}}
+								// style={{ backfaceVisibility: theme.colors. }}
+								size={100}
+								name="person-circle"
+							/>
+						)}
+					</Pressable>
 
 					<Text style={styles.profileTitle}>
 						{useUserStore.getState().username}
@@ -75,7 +85,6 @@ function CustomDrawerContent(props) {
 }
 
 export function DrawerStack() {
-	console.log(useUserStore.getState().profile_photo);
 	return (
 		<Drawer.Navigator
 			drawerContent={CustomDrawerContent}
@@ -87,6 +96,7 @@ export function DrawerStack() {
 				drawerLabelStyle: { marginStart: -15, marginVertical: -3 },
 				// drawerItemStyle: { paddingLeft: 15 },
 				drawerStyle: {},
+				unmountOnBlur: true,
 			}}
 		>
 			<Drawer.Screen
