@@ -1,10 +1,17 @@
 import { DatePickerIOSBase, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { theme } from "../../components/theme/theme";
 import { Button, DataTable, TextInput } from "react-native-paper";
 import { useUserStore } from "../../store/userStore";
 
 export default function ContactInfoScreen() {
+	const [email, setEmail] = useState("");
+	const [phone, setPhone] = useState("");
+
+	useEffect(() => {
+		setEmail(useUserStore.getState().email || "");
+	}, []);
+
 	return (
 		<View style={{ flex: 1, paddingHorizontal: 10, paddingTop: 20 }}>
 			<View style={{ flex: 1 }}>
@@ -18,8 +25,8 @@ export default function ContactInfoScreen() {
 						borderWidth: 1,
 					}}
 					mode="outlined"
-					// value={}
-					// onChangeText={setDescription}
+					value={email}
+					onChangeText={setEmail}
 				/>
 				<Text>Phone</Text>
 				<TextInput

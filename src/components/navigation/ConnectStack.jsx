@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 
 export default function ConnectStack() {
 	return (
-		<Stack.Navigator>
+		<Stack.Navigator screenOptions={{ freezeOnBlur: true }}>
 			<Stack.Screen
 				name="Connect"
 				options={{ headerTitle: (props) => <CustomHeader {...props} /> }}

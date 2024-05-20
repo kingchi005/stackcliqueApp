@@ -97,7 +97,7 @@ export default function Header({ state, navigation }) {
 						LEARN
 					</Text>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => handleTabNavigationOnPress(1, "Earn")}>
+				{/* <TouchableOpacity onPress={() => handleTabNavigationOnPress(1, "Earn")}>
 					<Text
 						style={[
 							styles.headerItem,
@@ -115,7 +115,7 @@ export default function Header({ state, navigation }) {
 					>
 						EARN
 					</Text>
-				</TouchableOpacity>
+				</TouchableOpacity> */}
 				<TouchableOpacity onPress={() => nativenav.navigate("Connect-stack")}>
 					<Text
 						style={[

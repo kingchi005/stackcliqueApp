@@ -35,62 +35,49 @@ export default function ChatScreen({ route }) {
 
 		socket.emit(socketEvents.JOIN_CHAT_EVENT, channel_id);
 		socket.on("newChat", ({ message, sender_id, channel_id: _channel_id }) => {
+			console.log({ message, sender_id, channel_id: _channel_id });
 			if (_channel_id !== channel_id) return;
 
 			addToChats({ message, byUser: sender_id === user_id });
 		});
-
 		return function didUnmount() {
 			socket.off("newChat");
-			// socket.removeAllListeners();
+			socket.removeAllListeners();
 		};
 	}, []);
 	const fetchChannelChats = async () => {
-		// /**@type {TChat[]} */
-		// const _mock = [...Array(20)].map(() => ({
-		// 	id: faker.string.uuid(),
-		// 	channel_id,
-		// 	sender_id: Math.random() > 0.5 ? user_id : faker.string.uuid(),
-		// 	message: faker.lorem.lines({ max: 3, min: 1 }),
-		// }));
-
-		// setChats(
-		// 	_mock.map(({ message, sender_id }, it) => ({
-		// 		message,
-		// 		byUser: sender_id === user_id,
-		// 	}))
-		// );
-		// chatContainer.current.scrollToEnd();
-		// return;
-
 		// load from cache
 
-		const _cache = useCacheStore.getState().getChannel(channel_id);
-		if (_cache) {
-			// setIsLoading(false)
-			setChats(
-				_cache.chatsMessages.map(({ message, sender_id }, it) => ({
-					message,
-					byUser: sender_id === user_id,
-				}))
-			);
+		// const _cache = useCacheStore.getState().getChannel(channel_id);
+		// if (_cache) {
+		// 	// setIsLoading(false)
+		// 	setChats(
+		// 		_cache.chatsMessages.map(({ message, sender_id }, it) => ({
+		// 			message,
+		// 			byUser: sender_id === user_id,
+		// 		}))
+		// 	);
 
-			return;
-		}
+		// 	return;
+		// }
 
 		// if (chats.length) return;
 		const _res = await getChannelDetails(channel_id);
-		// console.log(channel_id);
+		// console.log(JSON.stringify(_res, null, 2));
 		if (!_res.ok) return console.log(_res.error);
 
 		// cache here
 		useCacheStore.getState().cacheChannel(_res.data);
 
 		setChats(
-			_res.data.chatsMessages.map(({ message, sender_id }, it) => ({
-				message,
-				byUser: sender_id === user_id,
-			}))
+			_res.data.chatsMessages.map(
+				({ message, sender_id, created_at, sender: { username } }, it) => ({
+					message,
+					byUser: sender_id === user_id,
+					created_at,
+					username,
+				})
+			)
 		);
 		chatContainer.current.scrollToEnd();
 	};
@@ -109,7 +96,7 @@ export default function ChatScreen({ route }) {
 			channel_id,
 			sender_id: user_id,
 		});
-		console.log(_res);
+		// console.log(_res);
 		setMessage("");
 	};
 
@@ -150,33 +137,60 @@ function InfoCard({ text }) {
 	);
 }
 
-function ChatBoxCard({ message, byUser }) {
+function ChatBoxCard({ message, byUser, created_at, username }) {
 	return (
-		<View
-			style={{
-				// backgroundColor: theme.colors.primaryColor + "33",
-				backgroundColor: "#dfc1dc",
-				maxWidth: "60%",
-				alignSelf: byUser ? "flex-end" : "flex-start",
-				padding: 8,
-				borderTopLeftRadius: 15,
-				borderTopRightRadius: 15,
-				borderBottomLeftRadius: byUser ? 15 : 0,
-				borderBottomRightRadius: byUser ? 0 : 15,
-				marginVertical: 8,
-			}}
-		>
-			<Text
+		<>
+			<View
 				style={{
-					fontSize: 12,
-					color: "#333",
-					lineHeight: 15,
-					textDecorationStyle: "solid",
+					// backgroundColor: theme.colors.primaryColor + "33",
+					backgroundColor: "#dfc1dc",
+					maxWidth: "60%",
+					alignSelf: byUser ? "flex-end" : "flex-start",
+					padding: 8,
+					borderTopLeftRadius: byUser ? 15 : 0,
+					borderTopRightRadius: byUser ? 0 : 15,
+					borderBottomLeftRadius: 15,
+					borderBottomRightRadius: 15,
+					marginVertical: 8,
 				}}
 			>
-				{message}
-			</Text>
-		</View>
+				<View>
+					<Text
+						style={{
+							fontSize: 12,
+							alignSelf: "flex-start",
+							color: theme.colors.primaryColor,
+							marginBottom: 5,
+							textTransform: "uppercase",
+						}}
+					>
+						{username}
+					</Text>
+				</View>
+				<Text
+					style={{
+						fontSize: 15,
+						color: "#333",
+						lineHeight: 15,
+						textDecorationStyle: "solid",
+					}}
+				>
+					{message}
+				</Text>
+				<View>
+					<Text
+						style={{
+							fontSize: 10,
+							alignSelf: "flex-end",
+							color: theme.colors.grey,
+							marginTop: 5,
+						}}
+					>
+						{new Date(created_at).toLocaleTimeString()}
+					</Text>
+				</View>
+			</View>
+		</>
 	);
 }
 

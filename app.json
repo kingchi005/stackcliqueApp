@@ -24,7 +24,7 @@
 				"foregroundImage": "./assets/logo2.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.ae.stackclique"
+			"package": "com.stackclique.app"
 		},
 		"web": {
 			"favicon": "./assets/logo.png"
