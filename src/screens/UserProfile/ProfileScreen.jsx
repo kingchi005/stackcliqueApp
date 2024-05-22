@@ -49,7 +49,7 @@ export default function ProfileScreen() {
 					{ title: "Personal data", route: "personal-data" },
 					{ title: "COntact information", route: "contact-info" },
 					{ title: "Settings", route: "settings" },
-					{ title: "Help ans support", route: "help-support" },
+					// { title: "Help and support", route: "help-support" },
 				].map(({ title, route }, i) => (
 					<Fragment key={i}>
 						<TouchableRipple

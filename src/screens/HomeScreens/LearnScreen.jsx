@@ -54,7 +54,7 @@ export default function LearnScreen() {
 			>
 				<View style={{ marginBottom: 10 }}>
 					<WelcomeMessage />
-					<EnrolledCo urses />
+					<EnrolledCourses />
 				</View>
 
 				<CourseList />

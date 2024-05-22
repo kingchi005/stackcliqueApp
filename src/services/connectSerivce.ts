@@ -4,7 +4,7 @@ import { BASE_URL, SOCKET_URL } from ".";
 import { useSocket } from "./../store/socketStore";
 
 export const getSocket = () => {
-	const token = useAccessToken.getState().token; // Retrieve jwt token from local storage or cookie
+	const token = useAccessToken.getState().token;
 	let socket;
 	try {
 		socket = io(SOCKET_URL, {
@@ -16,15 +16,17 @@ export const getSocket = () => {
 	}
 
 	return socket;
-
-	// useSocket.getState().setSocket(socket);
-	// useSocket.getState().setIsConnected(true);
-	// console.log("socket initialised", socket);
 };
 
-export const getChannel = async (): Promise<TApiResponse<TChannel>> => {
+export const getChannels = async (): Promise<TApiResponse<TChannel>> => {
+	const token = useAccessToken.getState().token;
+
 	try {
-		const res = await (await fetch(`${BASE_URL}/connect/channels`)).json();
+		const res = await (
+			await fetch(`${BASE_URL}/connect/channels`, {
+				headers: { authorization: token },
+			})
+		).json();
 		return res;
 	} catch (error) {
 		// console.log(error);
@@ -32,11 +34,15 @@ export const getChannel = async (): Promise<TApiResponse<TChannel>> => {
 	}
 };
 export const getChannelErolled = async (): Promise<TApiResponse<TChannel>> => {
+	const token = useAccessToken.getState().token;
+
 	const user_id = useUserStore.getState().id;
 
 	try {
 		const res = await (
-			await fetch(`${BASE_URL}/connect/channels/${user_id}`)
+			await fetch(`${BASE_URL}/connect/channels/${user_id}`, {
+				headers: { authorization: token },
+			})
 		).json();
 		return res;
 	} catch (error) {
@@ -46,16 +52,69 @@ export const getChannelErolled = async (): Promise<TApiResponse<TChannel>> => {
 };
 
 export const postChatMessage = async ({ channel_id, message, sender_id }) => {
+	const token = useAccessToken.getState().token;
+
 	try {
 		const _res = await fetch(`${BASE_URL}/connect/chat-message`, {
 			body: JSON.stringify({ channel_id, message, sender_id }),
 			method: "post",
-			headers: { "Content-Type": "application/json" },
+			headers: {
+				"Content-Type": "application/json",
+				authorization: token,
+			},
 		});
-		// console.log("_res", _res);
-
 		const res = await _res.json();
-		// console.log("res", res);
+		return res;
+	} catch (error) {
+		console.log(error);
+		return { ok: false, error: { message: error.message, details: error } };
+	}
+};
+type param = {
+	fisrtName: string;
+	lastName: string;
+	dateOfBirth: string;
+	address: string;
+};
+export const updateUserDetails = async (data: param): Promise<TApiResponse> => {
+	const token = useAccessToken.getState().token;
+
+	const user_id = useUserStore.getState().id;
+	try {
+		const _res = await fetch(`${BASE_URL}/user/${user_id}`, {
+			body: JSON.stringify(data),
+			method: "put",
+			headers: {
+				"Content-Type": "application/json",
+				authorization: token,
+			},
+		});
+		const res = await _res.json();
+		return res;
+	} catch (error) {
+		console.log(error);
+		return { ok: false, error: { message: error.message, details: error } };
+	}
+};
+export const joinChannelRequest = async (
+	channel_id: string
+): Promise<TApiResponse> => {
+	const token = useAccessToken.getState().token;
+
+	const user_id = useUserStore.getState().id;
+
+	try {
+		const _res = await fetch(
+			`${BASE_URL}/connect/channel/${channel_id}/${user_id}`,
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/json",
+					authorization: token,
+				},
+			}
+		);
+		const res = await _res.json();
 		return res;
 	} catch (error) {
 		console.log(error);
@@ -66,12 +125,13 @@ export const postChatMessage = async ({ channel_id, message, sender_id }) => {
 export const getChannelDetails = async (
 	id: string
 ): Promise<TApiResponse<TChannel>> => {
-	try {
-		const _res = await fetch(`${BASE_URL}/connect/channel/${id}`);
-		// console.log("_res", _res);
+	const token = useAccessToken.getState().token;
 
+	try {
+		const _res = await fetch(`${BASE_URL}/connect/channel/${id}`, {
+			headers: { authorization: token },
+		});
 		const res = await _res.json();
-		// console.log("res", res);
 		return res;
 	} catch (error) {
 		console.log(error);

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, useWindowDimensions, ScrollView } from "react-native";
 import BottomTab from "../components/Learn/BottomTab";
 import { Ionicons } from "@expo/vector-icons";
-import { Surface, TextInput } from "react-native-paper";
+import { ActivityIndicator, Surface, TextInput } from "react-native-paper";
 import { theme } from "../components/theme/theme";
 import { faker } from "@faker-js/faker";
 import { useSocket } from "../store/socketStore";
@@ -18,8 +18,10 @@ export default function ChatScreen({ route }) {
 	const { title, channel_id } = route.params;
 	const [chats, setChats] = useState([]);
 	const [message, setMessage] = useState("");
+	const [isFetching, setIsFetching] = useState(true);
 	const socket = useSocket((st) => st.socket);
 	const user_id = useUserStore((st) => st.id);
+	const userName = useUserStore((st) => st.username);
 
 	/**@type {React.MutableRefObject<ScrollView>} */
 	const chatContainer = useRef(null);
@@ -36,6 +38,7 @@ export default function ChatScreen({ route }) {
 		socket.emit(socketEvents.JOIN_CHAT_EVENT, channel_id);
 		socket.on("newChat", ({ message, sender_id, channel_id: _channel_id }) => {
 			console.log({ message, sender_id, channel_id: _channel_id });
+			if (sender_id === user_id) return;
 			if (_channel_id !== channel_id) return;
 
 			addToChats({ message, byUser: sender_id === user_id });
@@ -46,25 +49,12 @@ export default function ChatScreen({ route }) {
 		};
 	}, []);
 	const fetchChannelChats = async () => {
-		// load from cache
-
-		// const _cache = useCacheStore.getState().getChannel(channel_id);
-		// if (_cache) {
-		// 	// setIsLoading(false)
-		// 	setChats(
-		// 		_cache.chatsMessages.map(({ message, sender_id }, it) => ({
-		// 			message,
-		// 			byUser: sender_id === user_id,
-		// 		}))
-		// 	);
-
-		// 	return;
-		// }
-
-		// if (chats.length) return;
 		const _res = await getChannelDetails(channel_id);
 		// console.log(JSON.stringify(_res, null, 2));
-		if (!_res.ok) return console.log(_res.error);
+		if (!_res.ok) {
+			setIsFetching(false);
+			return console.log(_res.error);
+		}
 
 		// cache here
 		useCacheStore.getState().cacheChannel(_res.data);
@@ -79,38 +69,54 @@ export default function ChatScreen({ route }) {
 				})
 			)
 		);
-		chatContainer.current.scrollToEnd();
+		setIsFetching(false);
+		setTimeout(() => {
+			chatContainer.current.scrollToEnd();
+		}, 500);
 	};
 
-	/**@param {{ message:string, byUser:boolean }} chat  */
+	/**@param {{ message:string, byUser:boolean,created_at:Date,username:string}} chat  */
 	function addToChats(chat) {
 		setChats((prev) => [...prev, chat]);
 		chatContainer.current.scrollToEnd();
 	}
 	const handleSendMessage = async () => {
-		// console.log(message);
-		// chatContainer.current.scrollToEnd();
-		// addToChats({ message, byUser: Math.random() < 0.5 });
+		const chat = message;
+		setMessage("");
+		addToChats({
+			message: chat,
+			byUser: true,
+			created_at: new Date().toISOString(),
+			username: userName,
+		});
 		const _res = await postChatMessage({
-			message,
+			message: chat,
 			channel_id,
 			sender_id: user_id,
 		});
 		// console.log(_res);
-		setMessage("");
 	};
 
 	return (
 		<View style={{ flex: 1 }}>
-			<ScrollView
-				ref={chatContainer}
-				style={{ backgroundColor: "#fff", paddingHorizontal: 20 }}
-			>
-				<InfoCard text={"Oct 11"} />
-				<InfoCard text={`"You Joined ${title}"`} />
-				{chats.length > 0 &&
-					chats.map((chat, i) => <ChatBoxCard key={i} {...chat} />)}
-			</ScrollView>
+			{isFetching ? (
+				<View
+					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+				>
+					<ActivityIndicator size={50} />
+				</View>
+			) : (
+				<ScrollView
+					ref={chatContainer}
+					style={{ backgroundColor: "#fff", paddingHorizontal: 20 }}
+				>
+					<InfoCard text={"Oct 11"} />
+					<InfoCard text={`"You Joined ${title}"`} />
+					{chats.length > 0 &&
+						!isFetching &&
+						chats.map((chat, i) => <ChatBoxCard key={i} {...chat} />)}
+				</ScrollView>
+			)}
 			<ChatBottomTab
 				handleSendMessage={handleSendMessage}
 				message={message}

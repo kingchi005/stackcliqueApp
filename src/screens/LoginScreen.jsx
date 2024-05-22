@@ -58,6 +58,7 @@ const LoginScreen = () => {
 			return Alert.alert("Login failed", res.error.message);
 		}
 
+		saveToken(res.data.UserAccessToken);
 		const _userDetails = await getUserDetails(res.data.id);
 		if (!_userDetails.ok) {
 			setIsLoading(false);
@@ -65,7 +66,6 @@ const LoginScreen = () => {
 		}
 		updateUserDetails(_userDetails.data);
 		setIsLoading(false);
-		saveToken(res.data.UserAccessToken);
 	};
 
 	return (
@@ -139,8 +139,8 @@ const LoginScreen = () => {
 					</TouchableOpacity>
 					<Button
 						style={{ marginTop: 40 }}
-						disabled={isLoading}
-						textColor="#ccc"
+						// disabled={isLoading}
+						textColor="#fefefe"
 						contentStyle={{
 							backgroundColor: "#7E0772",
 							borderRadius: 50,
@@ -149,37 +149,9 @@ const LoginScreen = () => {
 						loading={isLoading}
 						onPress={handleSubmit(onSubmit)}
 					>
-						<Text
-							style={{
-								textTransform: "capitalize",
-								fontSize: 15,
-								fontWeight: "500",
-								color: "#FFFFFF",
-							}}
-						>
-							Login
-						</Text>
+						Login
 					</Button>
-					{/* Login button */}
-					{/* 					<TouchableOpacity
-						activeOpacity={0.8}
-						// onPress={handleSubmit(onSubmit)}
-						style={{
-							marginTop: 40,
-							backgroundColor: isFormValid() ? "#7E0772" : "#CCCCCC",
-							paddingVertical: 15,
-							borderRadius: 50,
-							alignItems: "center",
-							padding: 10,
-						}}
-						disabled={!isFormValid()} // Disable the button if the form is not valid
-					>
-						<Text style={{ fontSize: 15, fontWeight: "500", color: "#FFFFFF" }}>
-							LogIn
-						</Text>
-					</TouchableOpacity>
- */}
-					{/* LogIn link */}
+
 					<View
 						style={{
 							alignSelf: "center",

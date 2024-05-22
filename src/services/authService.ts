@@ -1,8 +1,6 @@
 import { BASE_URL } from ".";
 import { useAccessToken, useUserStore } from "../store/userStore";
 
-const API_KEY = useAccessToken.getState().token;
-
 type TResgister = { email: string; password: string; username: string };
 export const registerUser = async ({
 	email,
@@ -62,15 +60,16 @@ export const loginUser = async ({
 export const getUserDetails = async (
 	id: string
 ): Promise<TApiResponse<TUser>> => {
+	const API_KEY = useAccessToken.getState().token;
+	// console.log(API_KEY);
 	try {
 		const _res = await fetch(`${BASE_URL}/user/${id}`, {
-			method: "get",
-			headers: { Authorization: `Bearer ${API_KEY}` },
+			headers: { authorization: API_KEY },
 		});
 		const res = await _res.json();
 		return res;
 	} catch (error) {
-		console.log(error);
+		// console.log("error", error);
 		return { ok: false, error: { message: error.message, details: error } };
 	}
 };

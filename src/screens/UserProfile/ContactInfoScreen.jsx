@@ -25,6 +25,7 @@ export default function ContactInfoScreen() {
 						borderWidth: 1,
 					}}
 					mode="outlined"
+					disabled
 					value={email}
 					onChangeText={setEmail}
 				/>
