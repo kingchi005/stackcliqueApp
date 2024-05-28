@@ -10,6 +10,7 @@ export default function ContactInfoScreen() {
 
 	useEffect(() => {
 		setEmail(useUserStore.getState().email || "");
+		setPhone(useUserStore.getState().phone_number || "");
 	}, []);
 
 	return (

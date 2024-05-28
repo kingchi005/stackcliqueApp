@@ -31,6 +31,11 @@ type TUser = {
 	id: string;
 	email: string;
 	username: string;
+	first_name?: string;
+	last_name?: string;
+	phone_number?: string;
+	date_of_birth?: Date;
+	address?: string;
 	level: 0;
 	notifications: any[];
 	profile_photo: string;

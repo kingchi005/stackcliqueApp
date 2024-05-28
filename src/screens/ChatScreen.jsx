@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, useWindowDimensions, ScrollView } from "react-native";
+import {
+	View,
+	Text,
+	useWindowDimensions,
+	ScrollView,
+	FlatList,
+} from "react-native";
+import __ from "lodash";
 import BottomTab from "../components/Learn/BottomTab";
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, Surface, TextInput } from "react-native-paper";
@@ -13,9 +20,11 @@ import {
 } from "../services/connectSerivce";
 import { useUserStore } from "../store/userStore";
 import { useCacheStore } from "../store/cacheStore";
+import { format } from "date-fns";
 
 export default function ChatScreen({ route }) {
 	const { title, channel_id } = route.params;
+	/** @type {[TChat[], React.Dispatch<React.SetStateAction<TChat[]>>]}  */
 	const [chats, setChats] = useState([]);
 	const [message, setMessage] = useState("");
 	const [isFetching, setIsFetching] = useState(true);
@@ -23,26 +32,34 @@ export default function ChatScreen({ route }) {
 	const user_id = useUserStore((st) => st.id);
 	const userName = useUserStore((st) => st.username);
 
-	/**@type {React.MutableRefObject<ScrollView>} */
+	/**@type {React.MutableRefObject<FlatList>} */
 	const chatContainer = useRef(null);
 
 	useEffect(() => {
-		// setChats([]);
 		fetchChannelChats();
 	}, []);
-	// console.log(sender_id);
 	useEffect(function didMount() {
-		// If the socket isn't initialized, we don't set up listeners.
 		if (!socket) return;
 
 		socket.emit(socketEvents.JOIN_CHAT_EVENT, channel_id);
-		socket.on("newChat", ({ message, sender_id, channel_id: _channel_id }) => {
-			console.log({ message, sender_id, channel_id: _channel_id });
-			if (sender_id === user_id) return;
-			if (_channel_id !== channel_id) return;
+		socket.on(
+			"newChat",
+			({
+				channel_id: _channel_id,
+				sender_id,
+				sender: { username },
+				...rest
+			}) => {
+				if (sender_id === user_id) return;
+				if (_channel_id !== channel_id) return;
 
-			addToChats({ message, byUser: sender_id === user_id });
-		});
+				addToChats({
+					byUser: sender_id === user_id,
+					username,
+					...rest,
+				});
+			}
+		);
 		return function didUnmount() {
 			socket.off("newChat");
 			socket.removeAllListeners();
@@ -50,7 +67,6 @@ export default function ChatScreen({ route }) {
 	}, []);
 	const fetchChannelChats = async () => {
 		const _res = await getChannelDetails(channel_id);
-		// console.log(JSON.stringify(_res, null, 2));
 		if (!_res.ok) {
 			setIsFetching(false);
 			return console.log(_res.error);
@@ -61,24 +77,23 @@ export default function ChatScreen({ route }) {
 
 		setChats(
 			_res.data.chatsMessages.map(
-				({ message, sender_id, created_at, sender: { username } }, it) => ({
-					message,
+				({ sender_id, sender: { username }, ...rest }, it) => ({
 					byUser: sender_id === user_id,
-					created_at,
 					username,
+					...rest,
 				})
 			)
 		);
 		setIsFetching(false);
 		setTimeout(() => {
-			chatContainer.current.scrollToEnd();
+			chatContainer?.current?.scrollToEnd();
 		}, 500);
 	};
 
 	/**@param {{ message:string, byUser:boolean,created_at:Date,username:string}} chat  */
 	function addToChats(chat) {
 		setChats((prev) => [...prev, chat]);
-		chatContainer.current.scrollToEnd();
+		chatContainer?.current?.scrollToEnd();
 	}
 	const handleSendMessage = async () => {
 		const chat = message;
@@ -94,8 +109,17 @@ export default function ChatScreen({ route }) {
 			channel_id,
 			sender_id: user_id,
 		});
-		// console.log(_res);
 	};
+
+	const [grouped, setGrouped] = useState();
+	useEffect(() => {
+		if (!chats.length) return;
+		const arr = __.groupBy(chats, (ch) => format(ch.created_at, "MMM dd"));
+		setGrouped(arr);
+		setTimeout(() => {
+			chatContainer?.current?.scrollToEnd();
+		}, 300);
+	}, [chats]);
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -106,16 +130,37 @@ export default function ChatScreen({ route }) {
 					<ActivityIndicator size={50} />
 				</View>
 			) : (
-				<ScrollView
-					ref={chatContainer}
-					style={{ backgroundColor: "#fff", paddingHorizontal: 20 }}
-				>
-					<InfoCard text={"Oct 11"} />
-					<InfoCard text={`"You Joined ${title}"`} />
-					{chats.length > 0 &&
-						!isFetching &&
-						chats.map((chat, i) => <ChatBoxCard key={i} {...chat} />)}
-				</ScrollView>
+				<>
+					{/* <ScrollView
+						ref={chatContainer}
+						style={{ backgroundColor: "#fff", paddingHorizontal: 20 }}
+					>
+						<InfoCard text={"Oct 11"} />
+						<InfoCard text={`"You Joined ${title}"`} />
+						{chats.length > 0 &&
+							!isFetching &&
+							chats.map((chat, i) => <ChatBoxCard key={i} {...chat} />)}
+					</ScrollView> */}
+					{grouped && (
+						<FlatList
+							style={{ backgroundColor: "#fff", paddingHorizontal: 20 }}
+							ref={chatContainer}
+							ListHeaderComponent={<InfoCard text={`"You Joined ${title}"`} />}
+							data={Object.keys(grouped).map((date) => ({
+								date,
+								content: grouped[date],
+							}))}
+							renderItem={({ item, index }) => (
+								<View>
+									<InfoCard text={item.date} />
+									{item.content.map((chat, i) => (
+										<ChatBoxCard key={i} {...chat} />
+									))}
+								</View>
+							)}
+						/>
+					)}
+				</>
 			)}
 			<ChatBottomTab
 				handleSendMessage={handleSendMessage}
@@ -135,7 +180,8 @@ function InfoCard({ text }) {
 				alignSelf: "center",
 				paddingHorizontal: 20,
 				marginVertical: 5,
-				paddingVertical: 2,
+				paddingVertical: 3,
+				borderRadius: 1,
 			}}
 		>
 			<Text style={{ fontSize: 10 }}>{text}</Text>
@@ -148,7 +194,6 @@ function ChatBoxCard({ message, byUser, created_at, username }) {
 		<>
 			<View
 				style={{
-					// backgroundColor: theme.colors.primaryColor + "33",
 					backgroundColor: "#dfc1dc",
 					maxWidth: "60%",
 					alignSelf: byUser ? "flex-end" : "flex-start",
@@ -192,7 +237,7 @@ function ChatBoxCard({ message, byUser, created_at, username }) {
 							marginTop: 5,
 						}}
 					>
-						{new Date(created_at).toLocaleTimeString()}
+						{format(created_at, "hh:mm aaa")}
 					</Text>
 				</View>
 			</View>

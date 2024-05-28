@@ -77,10 +77,11 @@ export default function ConnectScreen() {
 	const handleJoinChannel = async () => {
 		const res = await joinChannelRequest(channelId);
 		if (!res.ok) {
-			Alert.alert("Error"), res.message;
+			Alert.alert("Error", res.data.message);
 			return;
 		}
 		closeSheet();
+		ToastAndroid.show(res.message, ToastAndroid.SHORT);
 		fetchChannels();
 	};
 

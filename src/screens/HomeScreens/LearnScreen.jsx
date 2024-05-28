@@ -24,6 +24,7 @@ export default function LearnScreen() {
 			return Alert.alert("Could not refresh", "Check your internet and retry");
 		}
 		useUserStore.getState().update(userRes.data);
+		// console.log(JSON.stringify(userRes.data.enrolled_courses, null, 2));
 
 		// refetch courses
 		const courseRes = await getCourses();

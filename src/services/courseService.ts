@@ -1,5 +1,5 @@
 import { BASE_URL } from ".";
-import { useAccessToken } from "../store/userStore";
+import { useAccessToken, useUserStore } from "../store/userStore";
 
 export const getCourses = async () => {
 	const API_KEY = useAccessToken.getState().token;
@@ -38,6 +38,17 @@ export const searchCourse = async (searchValue: string) => {
 
 	const res: TApiResponse<TSearchedCourse[]> = await (
 		await fetch(`${BASE_URL}/courses/search?title=${searchValue}`, {
+			headers: { Authorization: API_KEY },
+		})
+	).json();
+	return res;
+};
+export const enrollCourse = async (id: string) => {
+	const API_KEY = useAccessToken.getState().token;
+	const userId = useUserStore.getState().id;
+
+	const res: TApiResponse = await (
+		await fetch(`${BASE_URL}/courses/enroll/${id}/${userId}`, {
 			headers: { Authorization: API_KEY },
 		})
 	).json();

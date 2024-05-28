@@ -1,5 +1,6 @@
 import {
 	Alert,
+	DatePickerIOS,
 	DatePickerIOSBase,
 	StyleSheet,
 	Text,
@@ -14,6 +15,7 @@ import { updateUserDetails } from "../../services/connectSerivce";
 import ProfileLayout from "./ProfileLayout";
 
 export default function PersonalDataScreen() {
+	const updateUser = useUserStore((st) => st.update);
 	const [isLoading, setIsLoading] = useState(false);
 	const [fisrtName, setFisrtName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -22,19 +24,21 @@ export default function PersonalDataScreen() {
 
 	useEffect(() => {
 		const {} = useUserStore.getState();
-		setAddress("");
-		setDateOfBirth("");
-		setLastName("");
-		setFisrtName("");
+		setAddress(useUserStore.getState().address);
+
+		const date = useUserStore.getState().date_of_birth;
+		if (date) setDateOfBirth(new Date(date).toLocaleDateString());
+		setLastName(useUserStore.getState().last_name);
+		setFisrtName(useUserStore.getState().first_name);
 	}, []);
 
 	const handleSave = async () => {
 		setIsLoading(true);
 		const data = {
-			fisrtName,
-			lastName,
-			dateOfBirth,
-			address,
+			first_name: fisrtName || "",
+			last_name: lastName || "",
+			// date_of_birth: dateOfBirth ? new Date(dateOfBirth).toISOString() : null,
+			address: address || "",
 		};
 
 		const res = await updateUserDetails(data);
@@ -45,6 +49,7 @@ export default function PersonalDataScreen() {
 		}
 		setIsLoading(false);
 		ToastAndroid.show(res.message, ToastAndroid.SHORT);
+		updateUser(res.data);
 	};
 
 	const useData = useUserStore((st) => st);
@@ -80,7 +85,7 @@ export default function PersonalDataScreen() {
 					/>
 					<Text>Date of birth</Text>
 					<TextInput
-						placeholder="Enter Date of birth"
+						placeholder="MM/DD/YYYY"
 						style={{ marginBottom: 20 }}
 						outlineStyle={{
 							borderRadius: 10,
@@ -111,12 +116,11 @@ export default function PersonalDataScreen() {
 					onPress={handleSave}
 					contentStyle={{
 						backgroundColor: theme.colors.primaryColor,
-						marginBottom: 20,
-						alignSelf: "center",
-						paddingHorizontal: 100,
+						marginHorizontal: 0,
 						paddingVertical: 3,
 						borderRadius: 50,
 					}}
+					style={{ marginHorizontal: 50 }}
 				>
 					Save
 				</Button>

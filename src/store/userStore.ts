@@ -21,6 +21,11 @@ const initialState: TUser = {
 	notifications: [],
 	level: 0,
 	profile_photo: "",
+	first_name: "",
+	last_name: "",
+	phone_number: "",
+	date_of_birth: null,
+	address: "",
 };
 
 export const useUserStore = create<TUserStore>()(

@@ -76,7 +76,9 @@ type param = {
 	dateOfBirth: string;
 	address: string;
 };
-export const updateUserDetails = async (data: param): Promise<TApiResponse> => {
+export const updateUserDetails = async (
+	data: param
+): Promise<TApiResponse<TUser>> => {
 	const token = useAccessToken.getState().token;
 
 	const user_id = useUserStore.getState().id;
@@ -191,3 +193,10 @@ export const socketEventMap = {
 	// ? when participant starts typing
 	typing: () => {},
 } as const;
+
+export function formateDate(date) {
+	const h = new Date(date).getHours();
+	const min = new Date(date).getMinutes();
+	const ampm = h >= 12 ? "PM" : "AM";
+	return `${h % 12}:${min.toString().padStart(2, "0")} ${ampm}`;
+}

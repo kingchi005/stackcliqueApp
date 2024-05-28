@@ -4,6 +4,7 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
+	ToastAndroid,
 	View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -16,7 +17,7 @@ import { UIStore, useUIStore } from "../store/store";
 import AvailableCourseCard from "../components/Learn/AvailableCourseCard";
 import CourseModules from "../components/Learn/CourseModules";
 import { theme } from "../components/theme/theme";
-import { getCourseDetails } from "../services/courseService";
+import { enrollCourse, getCourseDetails } from "../services/courseService";
 import { ActivityIndicator } from "react-native-paper";
 import { useCurrentCourse } from "../store/courseStore";
 import { Ionicons } from "@expo/vector-icons";
@@ -62,8 +63,16 @@ export default function CourseDetailsScreen() {
 		setIsLoading(false);
 	};
 
-	const handleEnroll = () => {
-		Alert.alert("Enrolling", "enrol now");
+	const handleEnroll = async () => {
+		// console.log(course_id);
+		const res = await enrollCourse(course_id);
+		if (!res.ok) {
+			Alert.alert("Error", res.error.message, [], { cancelable: true });
+			return;
+		}
+		// console.log("res", JSON.stringify(res, null, 2));
+		fetchCourseDetails();
+		ToastAndroid.show("Enrolled Successfully", ToastAndroid.SHORT);
 	};
 	return (
 		<View style={{ flex: 1, paddingHorizontal: 10.08 }}>

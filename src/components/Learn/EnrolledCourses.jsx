@@ -79,70 +79,8 @@ export default function EnrolledCourses() {
 	const { width } = useWindowDimensions();
 	const navigation = useNavigation();
 	const enrolledCourses = useUserStore((st) => st.enrolled_courses);
-	const _enrolledCourses = [
-		{
-			course: {
-				id: "13a6640b-c195-4a14-8454-2ac12514aa6c",
-				title:
-					"Timor decens vindico ter absque vulticulus strenuus adiuvo synagoga.",
-				category: {
-					name: "cubitum video compello",
-				},
-				about:
-					"Ascisco velut caveo natus bene timidus tracto comes ambitus vergo. Vulnero subvenio audentia quaerat. Alias canto paulatim solum eum.",
-				profile_photo: faker.image.avatarGitHub(),
-				cover_photo: faker.image.urlPicsumPhotos(),
-				required_user_level: 10,
-				_count: {
-					module: 10,
-				},
-			},
-			completed: false,
-			completed_modules: 9,
-			enrolled_at: "2024-02-07T14:16:59.662Z",
-		},
-		{
-			course: {
-				id: "1415a0e8-372a-40b5-bf82-db1c22cc31b9",
-				title: "Ars canto creber desino amplexus nostrum.",
-				category: {
-					name: "avaritia ambulo vorago",
-				},
-				about:
-					"Stipes pax sto vulgaris claustrum. Decerno sollers deserunt utilis vomica corrupti thymbra concido. Magnam administratio acidus terreo audax.",
-				profile_photo: faker.image.avatarGitHub(),
-				cover_photo: faker.image.urlPicsumPhotos(),
-				required_user_level: 5,
-				_count: {
-					module: 5,
-				},
-			},
-			completed: false,
-			completed_modules: 2,
-			enrolled_at: "2024-02-07T14:17:20.442Z",
-		},
-		{
-			course: {
-				id: "f571f005-cb4f-47ec-b4b8-25062b7c50e7",
-				title: "Currus commodo color ultio.",
-				category: {
-					name: "cubitum video compello",
-				},
-				about:
-					"Dedecor cornu spero iste neque ulciscor circumvenio vesco cribro. Reiciendis sopor aeger ciminatio. Stips varietas subseco voluptatum tyrannus maiores abduco ancilla.",
-				profile_photo: faker.image.avatarGitHub(),
-				cover_photo: faker.image.urlPicsumPhotos(),
-				required_user_level: 10,
-				_count: {
-					module: 14,
-				},
-			},
-			completed: false,
-			completed_modules: 8,
-			enrolled_at: "2024-02-07T14:17:43.715Z",
-		},
-	];
 
+	// console.log(enrolledCourses);
 	return (
 		<ScrollView
 			style={styles.scrollContainer}
@@ -153,7 +91,7 @@ export default function EnrolledCourses() {
 			contentContainerStyle={{ gap: 10 }}
 			showsHorizontalScrollIndicator={false}
 		>
-			{(enrolledCourses.length ? enrolledCourses : _enrolledCourses).map(
+			{enrolledCourses.map(
 				(
 					{
 						completed,

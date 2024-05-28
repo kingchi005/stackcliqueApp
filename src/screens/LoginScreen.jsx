@@ -55,14 +55,21 @@ const LoginScreen = () => {
 		const res = await loginUser(data);
 		if (!res.ok) {
 			setIsLoading(false);
-			return Alert.alert("Login failed", res.error.message);
+			return Alert.alert("Login failed", res.error.message, [], {
+				cancelable: true,
+			});
 		}
 
 		saveToken(res.data.UserAccessToken);
 		const _userDetails = await getUserDetails(res.data.id);
 		if (!_userDetails.ok) {
 			setIsLoading(false);
-			return Alert.alert("Could not fetch details", _userDetails.error.message);
+			return Alert.alert(
+				"Could not fetch details",
+				_userDetails.error.message,
+				[],
+				{ cancelable: true }
+			);
 		}
 		updateUserDetails(_userDetails.data);
 		setIsLoading(false);

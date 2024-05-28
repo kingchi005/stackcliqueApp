@@ -26,10 +26,24 @@ import {
 } from "react-native-paper";
 import { theme } from "../components/theme/theme";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { useCacheStore } from "../store/cacheStore";
+import { useUserStore } from "../store/userStore";
 
-export default function ChannelProfileScreen() {
+export default function ChannelProfileScreen({ route }) {
+	const userId = useUserStore((st) => st.id);
 	const [recieveNotify, setRecieveNotify] = useState(false);
 	const [description, setDescription] = useState("");
+	const channel = useCacheStore.getState().getChannel(route.params.channel_id);
+
+	const channelMembers = (function youFirst(id, members) {
+		const you = members.find((me) => me.id == id);
+		const others = members.filter((me) => me.id != id);
+		return [you, ...others];
+	})(userId, channel.members);
+
+	useEffect(() => {
+		setDescription(channel.description || "");
+	}, []);
 
 	/**@type {React.MutableRefObject<BottomSheet>} */
 	const bottomSheetRef = useRef(null);
@@ -165,28 +179,29 @@ export default function ChannelProfileScreen() {
 							marginBottom: 15,
 						}}
 					>
-						20 Members
+						{channelMembers.length} Members
 					</Text>
-					{[
-						{
-							name: "Lolo Popear",
-							avatar: require("../../assets/adaptive-icon1.png"),
-						},
-						{
-							name: "Jojo Roset",
-							avatar: require("../../assets/adaptive-icon1.png"),
-						},
-						{
-							name: "Kingchi ",
-							avatar: require("../../assets/adaptive-icon1.png"),
-						},
-					].map((item, key) => (
+					{channelMembers.map((item, key) => (
 						<View
 							key={key}
-							style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								gap: 10,
+								marginBottom: 10,
+							}}
 						>
-							<Avatar.Image size={40} source={item.avatar} />
-							<Text style={{ fontWeight: "700" }}>{item.name}</Text>
+							{item.profile_photo ? (
+								<Avatar.Image size={35} source={{ uri: item.profile_photo }} />
+							) : (
+								<Ionicons
+									color={theme.colors.background}
+									style={{ color: theme.colors.grey }}
+									size={35}
+									name="person-circle"
+								/>
+							)}
+							<Text style={{ fontWeight: "700" }}>{item.username}</Text>
 						</View>
 					))}
 				</View>
@@ -208,6 +223,7 @@ export default function ChannelProfileScreen() {
 						Add Channel description
 					</Text>
 					<TextInput
+						disabled
 						ref={descInputRef}
 						outlineStyle={{
 							borderRadius: 10,

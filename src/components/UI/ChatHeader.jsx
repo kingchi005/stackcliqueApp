@@ -15,8 +15,7 @@ import { Appbar, Avatar, TouchableRipple } from "react-native-paper";
 export default function ChatHeader({ back, options, route, navigation }) {
 	const _navigation = useNavigation();
 	const { top } = useSafeAreaInsets();
-	const { channel_avatar } = route.params;
-	// console.log(JSON.stringify(route.params, null, 2));
+	const { channel_avatar, channel_id } = route.params;
 	return (
 		<Appbar.Header>
 			{/* <Appbar.Action
@@ -66,7 +65,9 @@ export default function ChatHeader({ back, options, route, navigation }) {
 				}}
 			>
 				<TouchableRipple
-					onPress={() => _navigation.navigate("channel-profile")}
+					onPress={() =>
+						_navigation.navigate("channel-profile", { channel_id })
+					}
 				>
 					<View
 						style={{

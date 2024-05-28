@@ -13,7 +13,7 @@
 		"production": {},
 		"apk": {
 			"android": { "buildType": "apk" },
-			"env": { "EXPO_PUBLIC_API_URL": "https://stackclique.cyclic.cloud" }
+			"env": { "EXPO_PUBLIC_API_URL": "https://stackclique.xyz" }
 		}
 	},
 	"submit": {
