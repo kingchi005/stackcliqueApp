@@ -13,7 +13,8 @@
       "backgroundColor": "#7E0772"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.stackclique.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -63,6 +64,12 @@
         "projectId": "3e6efe70-7bec-40e4-bc65-7e2d01b47b2c"
       }
     },
-    "owner": "kingchi"
+    "owner": "kingchi",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/3e6efe70-7bec-40e4-bc65-7e2d01b47b2c"
+    }
   }
 }

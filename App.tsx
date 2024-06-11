@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Image, Text, TextInput, View, useColorScheme } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Image, Text, TextInput, View, useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { TailwindProvider } from "tailwindcss-react-native";
-import { DrawerStack } from "./src/components/navigation/DrawerStack";
+import DrawerStack from "./src/components/navigation/DrawerStack";
 import { AuthStack } from "./src/components/navigation/AuthStack";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
 import { useOnboarding } from "./src/store/store";
@@ -13,6 +13,7 @@ import { theme as myTheme } from "./src/components/theme/theme"
 import { SplashScreen } from "./src/screens";
 import ExpoConstants from "expo-constants"
 import { Splash } from "./src/screens/SplashScreen";
+import * as Updates from "expo-updates"
 
 export default function App() {
   // Text.defaultProps = Text.defaultProps || {};
@@ -28,6 +29,9 @@ export default function App() {
 
 
   const confirmLauched = useOnboarding((st) => st.confirm);
+  useEffect(() => {
+    onFetchUpdateAsync()
+  }, [])
 
   setTimeout(() => {
     setAppIsReady(true);
@@ -46,7 +50,19 @@ export default function App() {
     <StatusBar style="auto" />
   </>;
 
+  async function onFetchUpdateAsync() {
+    try {
+      const update = await Updates.checkForUpdateAsync();
 
+      if (update.isAvailable) {
+        await Updates.fetchUpdateAsync();
+        await Updates.reloadAsync();
+      }
+    } catch (error) {
+      // You can also add an alert() to see the error message in case of an error when fetching updates.
+      Alert.alert(`Error fetching latest Expo update: ${error}`);
+    }
+  }
 
   if (!onBoarded)
     return (
@@ -63,7 +79,6 @@ export default function App() {
         <NavigationContainer>
           {accessToken ? <DrawerStack /> : <AuthStack />}
           <StatusBar style="auto" />
-          {/* <DrawerStack /> */}
         </NavigationContainer>
       </TailwindProvider>
     </PaperProvider>

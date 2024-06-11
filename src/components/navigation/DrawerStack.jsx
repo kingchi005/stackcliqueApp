@@ -84,7 +84,7 @@ function CustomDrawerContent(props) {
 	);
 }
 
-export function DrawerStack() {
+export default function DrawerStack() {
 	return (
 		<Drawer.Navigator
 			drawerContent={CustomDrawerContent}
