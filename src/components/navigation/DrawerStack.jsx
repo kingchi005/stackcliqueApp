@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
 	itemIcon: { marginStart: 15 },
 	headerText: {
 		textTransform: "uppercase",
-		fontWeight: 700,
+		fontWeight: "700",
 		marginStart: -10,
 		color: theme.colors.primaryColor,
 	},

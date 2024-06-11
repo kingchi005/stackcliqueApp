@@ -25,7 +25,7 @@ export default function SearchResultCard({ title, profile_photo, _count }) {
 			/>
 
 			<View style={{ flex: 1 }}>
-				<Text style={{ fontWeight: 600, fontSize: 16 }}>{title}</Text>
+				<Text style={{ fontWeight: "600", fontSize: 16 }}>{title}</Text>
 				<View style={{ marginTop: "auto" }}>
 					<View
 						style={{

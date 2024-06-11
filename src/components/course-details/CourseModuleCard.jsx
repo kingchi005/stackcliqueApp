@@ -88,7 +88,7 @@ export default function CourseModuleCard({
 					style={{
 						textTransform: "uppercase",
 						textAlign: "center",
-						fontWeight: 700,
+						fontWeight: "700",
 						fontSize: 20,
 						marginBottom: 5,
 					}}

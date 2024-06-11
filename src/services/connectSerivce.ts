@@ -5,17 +5,17 @@ import { useSocket } from "./../store/socketStore";
 
 export const getSocket = () => {
 	const token = useAccessToken.getState().token;
-	let socket;
 	try {
-		socket = io(SOCKET_URL, {
+		const socket = io(SOCKET_URL, {
 			withCredentials: true,
 			auth: { token },
+			transports: ["websocket"],
 		});
-	} catch (error) {
+		return socket;
+	} catch (error: any) {
 		console.log(error);
+		return null;
 	}
-
-	return socket;
 };
 
 export const getChannels = async (): Promise<TApiResponse<TChannel>> => {
@@ -28,7 +28,7 @@ export const getChannels = async (): Promise<TApiResponse<TChannel>> => {
 			})
 		).json();
 		return res;
-	} catch (error) {
+	} catch (error: any) {
 		// console.log(error);
 		return { ok: false, error: { message: error.message, details: error } };
 	}
@@ -45,13 +45,17 @@ export const getChannelErolled = async (): Promise<TApiResponse<TChannel>> => {
 			})
 		).json();
 		return res;
-	} catch (error) {
+	} catch (error: any) {
 		// console.log(error);
 		return { ok: false, error: { message: error.message, details: error } };
 	}
 };
 
-export const postChatMessage = async ({ channel_id, message, sender_id }) => {
+export const postChatMessage = async ({
+	channel_id,
+	message,
+	sender_id,
+}: any) => {
 	const token = useAccessToken.getState().token;
 
 	try {
@@ -65,7 +69,7 @@ export const postChatMessage = async ({ channel_id, message, sender_id }) => {
 		});
 		const res = await _res.json();
 		return res;
-	} catch (error) {
+	} catch (error: any) {
 		console.log(error);
 		return { ok: false, error: { message: error.message, details: error } };
 	}
@@ -93,7 +97,7 @@ export const updateUserDetails = async (
 		});
 		const res = await _res.json();
 		return res;
-	} catch (error) {
+	} catch (error: any) {
 		console.log(error);
 		return { ok: false, error: { message: error.message, details: error } };
 	}
@@ -118,7 +122,7 @@ export const joinChannelRequest = async (
 		);
 		const res = await _res.json();
 		return res;
-	} catch (error) {
+	} catch (error: any) {
 		console.log(error);
 		return { ok: false, error: { message: error.message, details: error } };
 	}
@@ -131,11 +135,12 @@ export const getChannelDetails = async (
 
 	try {
 		const _res = await fetch(`${BASE_URL}/connect/channel/${id}`, {
-			headers: { authorization: token },
+			headers: { authorization: token, "Cache-Control": "no-cache" },
 		});
 		const res = await _res.json();
+
 		return res;
-	} catch (error) {
+	} catch (error: any) {
 		console.log(error);
 		return { ok: false, error: { message: error.message, details: error } };
 	}
@@ -194,7 +199,7 @@ export const socketEventMap = {
 	typing: () => {},
 } as const;
 
-export function formateDate(date) {
+export function formateDate(date: any) {
 	const h = new Date(date).getHours();
 	const min = new Date(date).getMinutes();
 	const ampm = h >= 12 ? "PM" : "AM";

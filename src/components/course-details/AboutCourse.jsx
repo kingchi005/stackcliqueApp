@@ -15,7 +15,7 @@ export default function AboutCourse({ about }) {
 	};
 	return (
 		<View style={styles.container}>
-			<Text style={{ fontWeight: 600 }}>About Course</Text>
+			<Text style={{ fontWeight: "600" }}>About Course</Text>
 
 			<View style={[styles.details]}>
 				<Text numberOfLines={isExpanded ? null : 4} style={styles.text}>

@@ -9,4 +9,4 @@ export { default as NotificationScreen } from "./HomeScreens/NotificationScreen.
 export { default as SearchScreen } from "./HomeScreens/SearchScreen.jsx";
 export { default as CourseDetailsScreen } from "./CourseDetailsScreen.jsx";
 export { default as LearningScreen } from "./HomeScreens/LearningScreen.jsx";
-export { default as TermsAndCondition } from "./TermsAndCondition.jsx"
+export { default as TermsAndCondition } from "./TermsAndCondition.jsx";

@@ -101,7 +101,7 @@ export default function ChatHeader({ back, options, route, navigation }) {
 				>
 					<Ionicons
 						style={styles.icon}
-						name="md-videocam-outline"
+						name="videocam-outline"
 						size={15}
 						color={theme.colors.grey}
 					/>
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
 	},
 	headerText: {
 		textTransform: "uppercase",
-		fontWeight: 700,
+		fontWeight: "700",
 		marginStart: -10,
 	},
 	icon: {

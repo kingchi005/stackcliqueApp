@@ -168,7 +168,7 @@ export default function CourseDetailsScreen() {
 
 const styles = StyleSheet.create({
 	modulesText: {
-		fontWeight: 700,
+		fontWeight: "700",
 		fontSize: 17,
 		borderBottomColor: theme.colors.primaryColor,
 		paddingBottom: 4,

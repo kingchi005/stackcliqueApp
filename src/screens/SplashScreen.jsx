@@ -1,7 +1,14 @@
-import { StyleSheet, Text, View, Dimensions, Animated } from "react-native";
+import {
+	StyleSheet,
+	Text,
+	View,
+	Dimensions,
+	Animated,
+	Image,
+} from "react-native";
 import React, { useEffect, useRef } from "react";
 
-const SplashScreen = ({ navigation }) => {
+const SplashScreen = () => {
 	const Width = Dimensions.get("window").width;
 	const Height = Dimensions.get("window").height;
 	const animation = useRef(new Animated.Value(0)).current;
@@ -42,6 +49,11 @@ const SplashScreen = ({ navigation }) => {
 };
 
 export default SplashScreen;
+export const Splash = () => (
+	<View style={{}}>
+		<Image source={require("@/assets/splash2.png")} style={{}} />
+	</View>
+);
 
 const styles = StyleSheet.create({
 	container: {

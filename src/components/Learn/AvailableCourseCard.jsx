@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
 	title: {
 		textTransform: "uppercase",
 		textAlign: "center",
-		fontWeight: 700,
+		fontWeight: "700",
 		fontSize: 20,
 		marginBottom: 5,
 		flexWrap: "wrap",

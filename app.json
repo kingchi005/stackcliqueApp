@@ -1,52 +1,68 @@
 {
-	"expo": {
-		"name": "StackClique",
-		"slug": "stackclique",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./assets/logo2.png",
-		"userInterfaceStyle": "light",
-		"splash": {
-			"image": "./assets/splash2.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#7E0772"
-		},
-		"updates": {
-			"fallbackToCacheTimeout": 0
-		},
-		"assetBundlePatterns": ["./assets/*"],
-		"ios": {
-			"supportsTablet": true,
-			"requireFullScreen": true
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/logo2.png",
-				"backgroundColor": "#ffffff"
-			},
-			"package": "com.stackclique.app"
-		},
-		"web": {
-			"favicon": "./assets/logo.png"
-		},
-		"extra": {
-			"plugins": [
-				[
-					"expo-screen-orientation",
-					{
-						"initialOrientation": "DEFAULT"
-					}
-				],
-				[
-					"expo-sensors",
-					{
-						"motionPermission": "Allow $(PRODUCT_NAME) to access your device motion."
-					}
-				]
-			],
-			"eas": {
-				"projectId": "c61c754d-ed8d-4762-932b-5239990b7070"
-			}
-		}
-	}
+  "expo": {
+    "name": "stackclique",
+    "slug": "stackclique",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo2.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash2.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#7E0772"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo2.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.stackclique.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "DEFAULT"
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Allow $(PRODUCT_NAME) to access your device motion."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3e6efe70-7bec-40e4-bc65-7e2d01b47b2c"
+      }
+    },
+    "owner": "kingchi"
+  }
 }

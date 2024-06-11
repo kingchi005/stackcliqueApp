@@ -1,12 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { theme } from "../theme/theme";
 import { LinearGradient } from "expo-linear-gradient";
-import Trophy from "../../../assets/svg/trophy.svg";
+import Trophy from "./svg/Trophy";
+
 export default function ProgressIndicator({ completed, total }) {
 	return (
 		<View style={styles.indicatorContainer}>
-			<Text style={{ color: theme.colors.grey, fontWeight: 700 }}>
+			<Text style={{ color: theme.colors.grey, fontWeight: "700" }}>
 				{completed}/{total} modules example
 			</Text>
 			<View
@@ -23,7 +24,7 @@ export default function ProgressIndicator({ completed, total }) {
 				</View>
 			</View>
 			<View style={{ position: "absolute", right: 2, top: 6, bottom: 6 }}>
-				<Trophy height={30} width={30} />
+				<Trophy />
 			</View>
 		</View>
 	);

@@ -16,6 +16,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import {
 	Button,
+	Dialog,
 	Divider,
 	FAB,
 	Searchbar,
@@ -24,8 +25,14 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { theme } from "../../components/theme/theme";
 import Animated from "react-native-reanimated";
-import { useUserStore } from "../../store/userStore";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { useAccessToken, useUserStore } from "../../store/userStore";
+import BottomSheet, {
+	BottomSheetBackdrop,
+	BottomSheetModal,
+	BottomSheetModalProvider,
+	useBottomSheet,
+} from "@gorhom/bottom-sheet";
+import { logoutUser } from "../../services/authService";
 
 export default function ConnectScreen() {
 	const navigation = useNavigation();
@@ -45,35 +52,56 @@ export default function ConnectScreen() {
 	const [joinName, setJoinName] = useState("");
 	const [channelId, setChannelId] = useState("");
 	const [channelDesc, setChannelDesc] = useState("");
-	/**@type {React.MutableRefObject<BottomSheet>} */
+	const [errDialog, setErrDialog] = useState({
+		show: false,
+		channelLevel: 0,
+		userLevel: 0,
+	});
+	/**@type {React.MutableRefObject<BottomSheetModal>} */
 	const bottomSheetRef = useRef(null);
 	/**@type {React.Ref<TextInput_>} */
 	const descInputRef = useRef(null);
-	const snapPoints = useMemo(() => ["65%", "45%"], []);
+	const snapPoints = useMemo(() => ["30%", "45%", "65%", "100%"], []);
 	const closeSheet = () => {
 		bottomSheetRef.current.close();
 	};
 	const openSheet = () => {
-		bottomSheetRef.current.expand();
+		bottomSheetRef.current.present();
 		// descInputRef.current.focus();
 	};
-	const handleSheetChange = useCallback((index) => {});
 
 	const fetchChannels = async () => {
 		setError(null);
 		setIsFetching(true);
 		const _res = await getChannels();
+		setIsFetching(false);
 
 		if (!_res.ok) {
-			setIsFetching(false);
+			const errMsg = _res.error.message;
+			if (
+				errMsg == "Please provide an API key" ||
+				errMsg == "API key has expired" ||
+				errMsg == "Invalid API key"
+			) {
+				let msg = "You have been logged out please login again";
+				Alert.alert("Session Expired", msg, [
+					{
+						text: "Login",
+						onPress() {
+							logoutUser();
+						},
+					},
+				]);
+			}
+
 			setError(_res.error.message);
 			return;
 		}
 
 		setChannels(_res.data);
 		setError(null);
-		setIsFetching(false);
 	};
+
 	const handleJoinChannel = async () => {
 		const res = await joinChannelRequest(channelId);
 		if (!res.ok) {
@@ -85,7 +113,6 @@ export default function ConnectScreen() {
 		fetchChannels();
 	};
 
-	// console.log(isConnected);
 	useEffect(function didMount() {
 		// If the socket isn't initialized, we don't set up listeners.
 		if (!socket) return;
@@ -95,11 +122,10 @@ export default function ConnectScreen() {
 		socket.on("connection", () => {
 			console.log("socket connected");
 		});
-
 		socket.on("messageReceived", (message) => {
 			console.log(message);
 		});
-		// When the component using this hook unmounts or if `socket` or `chats` change:
+		// When the component using this hook unmounts:
 		return function didUnmount() {
 			socket.disconnect();
 			socket.removeAllListeners();
@@ -121,21 +147,27 @@ export default function ConnectScreen() {
 			setJoinName(channel.name);
 			setChannelDesc(channel.description);
 			if (channelLevel > userLevel) {
-				Alert.alert(
-					"Not Eligible",
-					`You are not Eligible to join this channel
-channelLevel: ${channelLevel}
-userLevel: ${userLevel}
-You need ${channelLevel - userLevel} points more to be eligible`
-				);
+				setErrDialog({ show: true, channelLevel, userLevel });
+
 				return;
 			}
 			openSheet();
 		}
 	};
 
+	const renderBackdrop = useCallback(
+		(props) => (
+			<BottomSheetBackdrop
+				appearsOnIndex={0}
+				disappearsOnIndex={-1}
+				{...props}
+			/>
+		),
+		[]
+	);
+
 	return (
-		<>
+		<BottomSheetModalProvider>
 			<View style={{ flex: 1, paddingHorizontal: 10 }}>
 				<Searchbar style={{ marginTop: 10, marginBottom: 20 }} />
 
@@ -254,16 +286,44 @@ You need ${channelLevel - userLevel} points more to be eligible`
 					]}
 				/>
 			</View>
-			<BottomSheet
+			<Dialog
+				visible={errDialog.show}
+				dismissable
+				onDismiss={() => setErrDialog((prev) => ({ ...prev, show: false }))}
+			>
+				<Dialog.Title>
+					<Text>Not Eligible</Text>
+				</Dialog.Title>
+				<Dialog.Content>
+					<Text>
+						You are not Eligible to join this channel channelLevel:{" "}
+						{errDialog.channelLevel}
+					</Text>
+					<Text>userLevel: {errDialog.userLevel}</Text>
+					<Text>
+						You need {errDialog.channelLevel - errDialog.userLevel} points more
+						to be eligible
+					</Text>
+				</Dialog.Content>
+				<Dialog.Actions>
+					<Button
+						onPress={() => setErrDialog((prev) => ({ ...prev, show: false }))}
+						mode="text"
+					>
+						Got it
+					</Button>
+				</Dialog.Actions>
+			</Dialog>
+			<BottomSheetModal
 				enablePanDownToClose
 				ref={bottomSheetRef}
-				keyboardBehavior="fillParent"
-				index={-1}
-				snapPoints={snapPoints}
-				onChange={handleSheetChange}
-				containerStyle={{ marginHorizontal: 10 }}
+				backdropComponent={renderBackdrop}
+				index={0}
+				snapPoints={["30%", "45%"]}
+				containerStyle={{}}
 				backgroundStyle={{
 					backgroundColor: theme.colors.chatTabBg,
+					borderRadius: 50,
 				}}
 			>
 				<View style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
@@ -308,8 +368,8 @@ You need ${channelLevel - userLevel} points more to be eligible`
 						Join Channel
 					</Button>
 				</View>
-			</BottomSheet>
-		</>
+			</BottomSheetModal>
+		</BottomSheetModalProvider>
 	);
 }
 

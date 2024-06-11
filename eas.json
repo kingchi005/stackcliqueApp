@@ -1,6 +1,6 @@
 {
 	"cli": {
-		"version": ">= 7.1.1"
+		"version": ">= 9.1.0"
 	},
 	"build": {
 		"development": {
@@ -12,8 +12,7 @@
 		},
 		"production": {},
 		"apk": {
-			"android": { "buildType": "apk" },
-			"env": { "EXPO_PUBLIC_API_URL": "https://stackclique.xyz" }
+			"android": { "buildType": "apk" }
 		}
 	},
 	"submit": {

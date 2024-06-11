@@ -14,6 +14,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ChatScreen from "../../screens/ChatScreen";
 import ChatHeader from "../UI/ChatHeader";
 import { CourseHeader } from "../UI/CustomHeader";
+import { Text, View } from "react-native";
 
 const Stack = createNativeStackNavigator();
 const TopTab = createMaterialTopTabNavigator();

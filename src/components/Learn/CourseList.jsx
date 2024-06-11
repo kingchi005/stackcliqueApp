@@ -64,6 +64,7 @@ import AvailableCourseCard from "./AvailableCourseCard";
 import { faker } from "@faker-js/faker";
 import { useCourseList } from "../../store/courseStore";
 import { getCourses } from "../../services/courseService";
+import { logoutUser } from "../../services/authService";
 
 const CourseList = () => {
 	const { width } = useWindowDimensions();
@@ -77,8 +78,24 @@ const CourseList = () => {
 	const fetchCourses = async () => {
 		const res = await getCourses();
 		if (!res.ok) {
-			// setIsLoading(false)
-			return Alert.alert("Could not fetch courses", res.error.message);
+			const errMsg = res.error.message;
+			if (
+				errMsg == "Please provide an API key" ||
+				errMsg == "API key has expired" ||
+				errMsg == "Invalid API key"
+			) {
+				let msg = "You have been logged out please login again";
+				Alert.alert("Session Expired", msg, [
+					{
+						text: "Login",
+						onPress() {
+							logoutUser();
+						},
+					},
+				]);
+				return;
+			}
+			return Alert.alert("Could not fetch courses", errMsg);
 		}
 		setCourseList(res.data);
 	};

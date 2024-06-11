@@ -29,7 +29,7 @@ function CoursesEnrolledCard({
 				<Text
 					style={{
 						color: theme.colors.primaryColor,
-						fontWeight: 800,
+						fontWeight: "800",
 						fontSize: 10,
 						textTransform: "uppercase",
 					}}
@@ -39,7 +39,7 @@ function CoursesEnrolledCard({
 				<Text
 					style={{
 						color: theme.colors.green,
-						fontWeight: 800,
+						fontWeight: "800",
 						fontSize: 10,
 						textTransform: "uppercase",
 					}}
@@ -56,7 +56,11 @@ function CoursesEnrolledCard({
 						style={{ borderRadius: 10 }}
 					/>
 					<Text
-						style={{ fontSize: 20, color: theme.colors.grey, fontWeight: 700 }}
+						style={{
+							fontSize: 20,
+							color: theme.colors.grey,
+							fontWeight: "700",
+						}}
 					>
 						{(() => {
 							let _ = title.split(" ");

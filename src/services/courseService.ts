@@ -35,24 +35,32 @@ export const getCourseDetails = async (id: string) => {
 
 export const searchCourse = async (searchValue: string) => {
 	const API_KEY = useAccessToken.getState().token;
-
-	const res: TApiResponse<TSearchedCourse[]> = await (
-		await fetch(`${BASE_URL}/courses/search?title=${searchValue}`, {
-			headers: { Authorization: API_KEY },
-		})
-	).json();
-	return res;
+	try {
+		const res: TApiResponse<TSearchedCourse[]> = await (
+			await fetch(`${BASE_URL}/courses/search?title=${searchValue}`, {
+				headers: { Authorization: API_KEY },
+			})
+		).json();
+		return res;
+	} catch (error) {
+		// console.log(error);
+		return { ok: false, error: { message: error.message, details: error } };
+	}
 };
 export const enrollCourse = async (id: string) => {
 	const API_KEY = useAccessToken.getState().token;
 	const userId = useUserStore.getState().id;
-
-	const res: TApiResponse = await (
-		await fetch(`${BASE_URL}/courses/enroll/${id}/${userId}`, {
-			headers: { Authorization: API_KEY },
-		})
-	).json();
-	return res;
+	try {
+		const res: TApiResponse = await (
+			await fetch(`${BASE_URL}/courses/enroll/${id}/${userId}`, {
+				headers: { Authorization: API_KEY },
+			})
+		).json();
+		return res;
+	} catch (error) {
+		// console.log(error);
+		return { ok: false, error: { message: error.message, details: error } };
+	}
 };
 
 // export const searchCourse

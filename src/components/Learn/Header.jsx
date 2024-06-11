@@ -157,11 +157,11 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.colors.white,
 		paddingTop: 25,
 		paddingBottom: 10,
-		fontWeight: 700,
+		fontWeight: "700",
 		marginTop: StatusBar.currentHeight || 0,
 	},
 	headerItem: {
-		fontWeight: 700,
+		fontWeight: "700",
 		fontSize: 15,
 		color: theme.colors.grey,
 	},

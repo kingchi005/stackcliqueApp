@@ -2,6 +2,7 @@ import {
 	Alert,
 	DatePickerIOS,
 	DatePickerIOSBase,
+	DatePickerIOSComponent,
 	StyleSheet,
 	Text,
 	ToastAndroid,
@@ -13,6 +14,10 @@ import { Button, DataTable, TextInput } from "react-native-paper";
 import { useUserStore } from "../../store/userStore";
 import { updateUserDetails } from "../../services/connectSerivce";
 import ProfileLayout from "./ProfileLayout";
+import DateTimePicker, {
+	DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
+import { format, isDate, parse } from "date-fns";
 
 export default function PersonalDataScreen() {
 	const updateUser = useUserStore((st) => st.update);
@@ -20,6 +25,8 @@ export default function PersonalDataScreen() {
 	const [fisrtName, setFisrtName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [dateOfBirth, setDateOfBirth] = useState("");
+	const [date, setDate] = useState("");
+
 	const [address, setAddress] = useState("");
 
 	useEffect(() => {
@@ -27,7 +34,8 @@ export default function PersonalDataScreen() {
 		setAddress(useUserStore.getState().address);
 
 		const date = useUserStore.getState().date_of_birth;
-		if (date) setDateOfBirth(new Date(date).toLocaleDateString());
+		if (date) setDate(date);
+		// if (date) setDateOfBirth(new Date(date).toISOString().split("T")[0]);
 		setLastName(useUserStore.getState().last_name);
 		setFisrtName(useUserStore.getState().first_name);
 	}, []);
@@ -35,11 +43,12 @@ export default function PersonalDataScreen() {
 	const handleSave = async () => {
 		setIsLoading(true);
 		const data = {
-			first_name: fisrtName || "",
-			last_name: lastName || "",
-			// date_of_birth: dateOfBirth ? new Date(dateOfBirth).toISOString() : null,
-			address: address || "",
+			first_name: fisrtName,
+			last_name: lastName,
+			date_of_birth: date,
+			address: address,
 		};
+		// console.log(data);
 
 		const res = await updateUserDetails(data);
 		if (!res.ok) {
@@ -52,7 +61,31 @@ export default function PersonalDataScreen() {
 		updateUser(res.data);
 	};
 
-	const useData = useUserStore((st) => st);
+	const userData = useUserStore((st) => st);
+
+	const onChange = (event, selectedDate) => {
+		const currentDate = selectedDate;
+		2;
+		setDate(currentDate);
+	};
+
+	const showMode = (currentMode) => {
+		// console.log(date, "showMode");
+		DateTimePickerAndroid.open({
+			value: date ? new Date(date) : new Date(),
+			onChange,
+			mode: currentMode,
+			is24Hour: false,
+		});
+	};
+
+	const showDatepicker = () => {
+		showMode("date");
+	};
+
+	const showTimepicker = () => {
+		showMode("time");
+	};
 	return (
 		<View style={{ flex: 1, paddingHorizontal: 10, paddingTop: 20 }}>
 			<ProfileLayout>
@@ -85,7 +118,8 @@ export default function PersonalDataScreen() {
 					/>
 					<Text>Date of birth</Text>
 					<TextInput
-						placeholder="MM/DD/YYYY"
+						placeholder="Enter your Date of Birth"
+						keyboardType="numeric"
 						style={{ marginBottom: 20 }}
 						outlineStyle={{
 							borderRadius: 10,
@@ -93,8 +127,8 @@ export default function PersonalDataScreen() {
 							borderWidth: 1,
 						}}
 						mode="outlined"
-						value={dateOfBirth}
-						onChangeText={setDateOfBirth}
+						onPress={showDatepicker}
+						value={date ? new Date(date).toDateString() : ""}
 					/>
 					<Text>Address</Text>
 					<TextInput
@@ -128,5 +162,3 @@ export default function PersonalDataScreen() {
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({});

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 	},
 	nameText: {
 		color: theme.colors.primaryColor,
-		fontWeight: 700,
+		fontWeight: "700",
 		fontSize: 16,
 	},
 	searchIcon: {

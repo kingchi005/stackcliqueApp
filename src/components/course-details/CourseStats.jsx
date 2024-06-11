@@ -18,7 +18,7 @@ export default function CourseStats({
 				style={{
 					fontSize: 12,
 					color: theme.colors.primaryColor,
-					fontWeight: 600,
+					fontWeight: "600",
 					marginTop: 6,
 				}}
 			>
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
 	courseTitle: {
 		textTransform: "uppercase",
 		fontSize: 16,
-		fontWeight: 600,
+		fontWeight: "600",
 	},
 });

@@ -113,13 +113,21 @@ export default function ChatScreen({ route }) {
 
 	const [grouped, setGrouped] = useState();
 	useEffect(() => {
-		if (!chats.length) return;
-		const arr = __.groupBy(chats, (ch) => format(ch.created_at, "MMM dd"));
+		// if (!chats.length) return;
+		const arr = __.groupBy(chats, (ch) => {
+			let dateFormat = format(ch.created_at, "MMM dd");
+			if (dateFormat == format(new Date().toISOString(), "MMM dd")) {
+				dateFormat = "Today";
+			}
+			return dateFormat;
+		});
 		setGrouped(arr);
 		setTimeout(() => {
 			chatContainer?.current?.scrollToEnd();
 		}, 300);
 	}, [chats]);
+
+	// console.log(JSON.stringify(grouped, null, 2));
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -130,17 +138,13 @@ export default function ChatScreen({ route }) {
 					<ActivityIndicator size={50} />
 				</View>
 			) : (
-				<>
-					{/* <ScrollView
-						ref={chatContainer}
-						style={{ backgroundColor: "#fff", paddingHorizontal: 20 }}
-					>
-						<InfoCard text={"Oct 11"} />
-						<InfoCard text={`"You Joined ${title}"`} />
-						{chats.length > 0 &&
-							!isFetching &&
-							chats.map((chat, i) => <ChatBoxCard key={i} {...chat} />)}
-					</ScrollView> */}
+				<View style={{ flex: 1 }}>
+					{/* {grouped && (
+						<>
+							<InfoCard text={"No chats on this Channel yet"} />
+							<InfoCard text={"Be the first to chat here"} />
+						</>
+					)} */}
 					{grouped && (
 						<FlatList
 							style={{ backgroundColor: "#fff", paddingHorizontal: 20 }}
@@ -160,7 +164,7 @@ export default function ChatScreen({ route }) {
 							)}
 						/>
 					)}
-				</>
+				</View>
 			)}
 			<ChatBottomTab
 				handleSendMessage={handleSendMessage}
@@ -280,7 +284,12 @@ function ChatBottomTab({ message, onTyping, handleSendMessage }) {
 						borderRadius: 10,
 						borderWidth: 0,
 					}}
-					style={{ position: "relative", paddingEnd: 20, maxHeight: 85 }}
+					style={{
+						position: "relative",
+						paddingEnd: 20,
+						maxHeight: 85,
+						paddingBottom: 0,
+					}}
 					placeholder="Type here..."
 					placeholderTextColor={"#11111133"}
 				/>
@@ -300,7 +309,7 @@ function ChatBottomTab({ message, onTyping, handleSendMessage }) {
 						borderRadius: 20,
 						alignSelf: "center",
 					}}
-					name="md-send"
+					name="send"
 				/>
 			) : (
 				<Ionicons

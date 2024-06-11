@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
 	},
 	headerText: {
 		textTransform: "uppercase",
-		fontWeight: 700,
+		fontWeight: "700",
 		marginStart: -10,
 		color: theme.colors.primaryColor,
 	},

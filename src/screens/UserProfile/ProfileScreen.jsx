@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useUserStore } from "../../store/userStore";
 import { logoutUser } from "../../services/authService";
+import AvatartUpload from "../../components/UI/AvatartUpload";
 
 export default function ProfileScreen() {
 	const navigation = useNavigation();
@@ -16,33 +17,7 @@ export default function ProfileScreen() {
 	};
 	return (
 		<View style={{ flex: 1, paddingHorizontal: 10 }}>
-			<View
-				style={{
-					flexDirection: "column",
-					alignItems: "center",
-					marginBottom: 30,
-					marginTop: 40,
-				}}
-			>
-				{userData.profile_photo ? (
-					<Avatar.Image size={150} source={{ uri: userData.profile_photo }} />
-				) : (
-					<Ionicons
-						color={theme.colors.background}
-						style={{
-							color: theme.colors.grey,
-							marginTop: 20,
-						}}
-						// style={{ backfaceVisibility: theme.colors. }}
-						size={150}
-						name="person-circle"
-					/>
-				)}
-
-				<Button onPress={() => {}} textColor={theme.colors.primaryColor}>
-					<Text> Change Profile Photo</Text>
-				</Button>
-			</View>
+			<AvatartUpload />
 			<View style={{ marginTop: 10, flex: 1 }}>
 				<Divider />
 				{[

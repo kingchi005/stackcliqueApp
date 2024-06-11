@@ -109,11 +109,32 @@ type TCourseModule = {
 	profile_photo: string;
 	cover_photo: string;
 };
+
+type TNotification = {
+	id: string;
+	title: string;
+	message: string;
+	user_id: string;
+	user: TUser;
+	created_at: Date;
+};
+type TCloudinaryRes = {
+	asset_id: string;
+	public_id: string;
+	signature: string;
+	width: number;
+	height: number;
+	format: string;
+	created_at: string;
+	url: string;
+	secure_url: string;
+	original_filename: string;
+};
 type TCourseEnrollment = {};
 
 type TApiResponse<D = unknown> =
+	| { ok: true; message: string; data: D }
 	| {
 			ok: false;
 			error: { message: string; details: unknown };
-	  }
-	| { ok: true; message: string; data: D };
+	  };
