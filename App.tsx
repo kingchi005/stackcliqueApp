@@ -41,10 +41,13 @@ export default function App() {
     confirmLauched();
   };
 
-  if (!appIsReady) return <>
-    <View style={{ backgroundColor: myTheme.colors.primaryColor, flex: 1 }} />
-    <StatusBar style="auto" />
-  </>;
+  if (!appIsReady) return null
+
+
+  //  <>
+  //   <View style={{ backgroundColor: myTheme.colors.primaryColor, flex: 1 }} />
+  //   <StatusBar style="auto" />
+  // </>;
 
   // console.log(JSON.stringify(Constants, null, 2));
 
