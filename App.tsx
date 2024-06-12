@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Image, Text, TextInput, View, useColorScheme } from "react-native";
+import { Alert, Image, Text, TextInput, ToastAndroid, View, useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { TailwindProvider } from "tailwindcss-react-native";
@@ -41,22 +41,12 @@ export default function App() {
     confirmLauched();
   };
 
-  if (!appIsReady) return null
-
-
-  //  <>
-  //   <View style={{ backgroundColor: myTheme.colors.primaryColor, flex: 1 }} />
-  //   <StatusBar style="auto" />
-  // </>;
-
-  // console.log(JSON.stringify(Constants, null, 2));
-
-
   async function onFetchUpdateAsync() {
     try {
       const update = await Updates.checkForUpdateAsync();
 
       if (update.isAvailable) {
+        ToastAndroid.show("Updating application ...", ToastAndroid.SHORT)
         await Updates.fetchUpdateAsync();
         await Updates.reloadAsync();
       }
@@ -65,6 +55,8 @@ export default function App() {
       Alert.alert("Error fetching latest Expo update", error + "");
     }
   }
+
+  if (!appIsReady) return null
 
   if (!onBoarded)
     return (
