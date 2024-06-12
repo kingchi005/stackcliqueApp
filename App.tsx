@@ -3,23 +3,19 @@ import { Alert, Image, Text, TextInput, View, useColorScheme } from "react-nativ
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { TailwindProvider } from "tailwindcss-react-native";
-import DrawerStack from "./src/components/navigation/DrawerStack";
-import { AuthStack } from "./src/components/navigation/AuthStack";
-import OnboardingScreen from "./src/screens/OnboardingScreen";
-import { useOnboarding } from "./src/store/store";
-import { useAccessToken } from "./src/store/userStore";
+import { DrawerStack } from "@/src/components/navigation/DrawerStack";
+import { AuthStack } from "@/src/components/navigation/AuthStack";
+import OnboardingScreen from "@/src/screens/OnboardingScreen";
+import { useOnboarding } from "@/src/store/store";
+import { useAccessToken } from "@/src/store/userStore";
 import { ActivityIndicator, PaperProvider, useTheme } from "react-native-paper";
-import { theme as myTheme } from "./src/components/theme/theme"
-import { SplashScreen } from "./src/screens";
-import ExpoConstants from "expo-constants"
-import { Splash } from "./src/screens/SplashScreen";
+import { theme as myTheme } from "@/src/components/theme/theme"
+import { SplashScreen } from "@/src/screens";
+import Constants from "expo-constants"
+import { Splash } from "@/src/screens/SplashScreen";
 import * as Updates from "expo-updates"
 
 export default function App() {
-  // Text.defaultProps = Text.defaultProps || {};
-  // Text.defaultProps.maxFontSizeMultiplier = 1.2;
-  // TextInput.defaultProps = Text.defaultProps || {};
-  // TextInput.defaultProps.maxFontSizeMultiplier = 1.2;
 
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -50,6 +46,9 @@ export default function App() {
     <StatusBar style="auto" />
   </>;
 
+  // console.log(JSON.stringify(Constants, null, 2));
+
+
   async function onFetchUpdateAsync() {
     try {
       const update = await Updates.checkForUpdateAsync();
@@ -59,8 +58,8 @@ export default function App() {
         await Updates.reloadAsync();
       }
     } catch (error) {
-      // You can also add an alert() to see the error message in case of an error when fetching updates.
-      Alert.alert(`Error fetching latest Expo update: ${error}`);
+      // console.log(error);
+      Alert.alert("Error fetching latest Expo update", error + "");
     }
   }
 

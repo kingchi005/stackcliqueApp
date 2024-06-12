@@ -125,7 +125,7 @@ export default function CourseDetailsScreen() {
 									Modules
 								</Text>
 							</Pressable>
-							<Pressable onPress={() => setShowModules(false)}>
+							{/* <Pressable onPress={() => setShowModules(false)}>
 								<Text
 									style={[
 										styles.modulesText,
@@ -139,7 +139,7 @@ export default function CourseDetailsScreen() {
 								>
 									Reviews
 								</Text>
-							</Pressable>
+							</Pressable> */}
 						</View>
 						{showModules ? (
 							<CourseModules
