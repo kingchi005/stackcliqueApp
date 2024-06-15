@@ -8,6 +8,7 @@ import ChannelProfileScreen from "../../screens/ChannelProfileScreen";
 import CreateChaneelScreen from "../../screens/CreateChaneelScreen";
 import { StyleSheet } from "react-native";
 import { theme } from "../theme/theme";
+import PictureModal from "../UI/PictureModal";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +40,16 @@ export default function ConnectStack() {
 					headerLeft: () => null,
 					headerBackVisible: false,
 				}}
+			/>
+			<Stack.Screen
+				name="avatar-modal"
+				options={{
+					headerShown: false,
+					headerBackVisible: false,
+					presentation: "transparentModal",
+					animation: "fade",
+				}}
+				component={PictureModal}
 			/>
 			<Stack.Screen
 				name="create-channel"

@@ -6,8 +6,12 @@ import CustomHeader from "../UI/CustomHeader";
 import PersonalDataScreen from "../../screens/UserProfile/PersonalDataScreen";
 import ContactInfoScreen from "../../screens/UserProfile/ContactInfoScreen";
 import SettingScreen from "../../screens/UserProfile/SettingScreen";
+import PictureModal from "../UI/PictureModal";
+import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 
 const Stack = createNativeStackNavigator();
+// const Stack = createSharedElementStackNavigator();
+
 export default function ProfileStack() {
 	return (
 		<Stack.Navigator>
@@ -24,6 +28,16 @@ export default function ProfileStack() {
 					headerBackVisible: false,
 				}}
 				component={PersonalDataScreen}
+			/>
+			<Stack.Screen
+				name="avatar-modal"
+				options={{
+					headerShown: false,
+					headerBackVisible: false,
+					presentation: "transparentModal",
+					animation: "fade",
+				}}
+				component={PictureModal}
 			/>
 			<Stack.Screen
 				name="contact-info"

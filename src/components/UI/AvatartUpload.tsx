@@ -1,117 +1,239 @@
-
-import { useEffect, useState } from 'react';
-import { Button as RNButton, Image, View, StyleSheet, Text, Platform, ToastAndroid, Alert, ActivityIndicator as RNAI } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { launchImageLibraryAsync } from 'expo-image-picker';
-import { useUserStore } from '../../store/userStore';
-import { ActivityIndicator, Avatar } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
-import { theme } from '../theme/theme';
-import { Button } from 'react-native-paper';
-import { handleImageUpload, updateProfilePhoto } from '@/src/services/userService';
+import React, { useCallback, useRef, useState } from "react";
+import {
+	View,
+	Text,
+	ToastAndroid,
+	Alert,
+	Pressable,
+	Platform,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { useUserStore } from "../../store/userStore";
+import { ActivityIndicator } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons";
+import { theme } from "../theme/theme";
+import { Button } from "react-native-paper";
+import {
+	handleImageUpload,
+	updateProfilePhoto,
+} from "@/src/services/userService";
+import Animated from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
+import {
+	BottomSheetBackdrop,
+	BottomSheetModal,
+	BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import { IconProps } from "react-native-paper/lib/typescript/components/MaterialCommunityIcon";
 
 export default function AvatartUpload() {
-  const [image, setImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false)
-  const user = useUserStore((st) => st);
-  const updateUser = useUserStore(st => st.update)
+	const [image, setImage] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
+	const user = useUserStore((st) => st);
+	const updateUser = useUserStore((st) => st.update);
+	const navigation = useNavigation<any>();
 
+	const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  async function request() {
-    if (Platform.OS !== "web") {
-      const {
-        status,
-      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!");
-      }
-    }
-  }
+	const pickImage = async () => {
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [1, 1],
+			quality: 1,
+			base64: true,
+		});
 
-  const pickImage = async () => {
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+			handleImageLoaded(`data:image/jpeg;base64,${result.assets[0].base64}`);
+		}
+	};
+	const pickCameraImage = async () => {
+		await ImagePicker.requestCameraPermissionsAsync();
+		let result = await ImagePicker.launchCameraAsync({
+			cameraType: ImagePicker.CameraType.front,
+			allowsEditing: true,
+			aspect: [1, 1],
+			quality: 1,
+			base64: true,
+		});
 
-    // No permissions request is necessary for launching the image library
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+			handleImageLoaded(`data:image/jpeg;base64,${result.assets[0].base64}`);
+		}
+	};
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1, base64: true
-    });
+	async function handleImageLoaded(image: string) {
+		setLoading(true);
 
-    // console.log(JSON.stringify(result, null, 2));
+		const res = await handleImageUpload(image);
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      handleImageLoaded(`data:image/jpeg;base64,${result.assets[0].base64}`)
-    }
-  };
+		if (!res.ok) {
+			setLoading(false);
+			Alert.alert("Image upload failed", res.error.message, [{ text: "ok" }], {
+				cancelable: true,
+			});
+			return;
+		}
 
-  async function handleImageLoaded(image: string) {
-    setLoading(true)
+		const updateRes = await updateProfilePhoto(res.data.secure_url);
 
-    const res = await handleImageUpload(image)
+		if (!updateRes.ok) {
+			setLoading(false);
+			Alert.alert(
+				"Photo updated  failed",
+				updateRes.error.message,
+				[{ text: "ok" }],
+				{ cancelable: true }
+			);
+			return;
+		}
+		// console.log(updateRes);
 
-    if (!res.ok) {
-      setLoading(false)
-      Alert.alert("Image upload failed", res.error.message, [{ text: "ok" }], { cancelable: true })
-      return
-    }
+		updateUser(updateRes.data);
+		setLoading(false);
+		if (Platform.OS == "android")
+			ToastAndroid.show(
+				"Profile photo updated successfully",
+				ToastAndroid.SHORT
+			);
+		else Alert.alert("Profile photo updated successfully");
+	}
 
-    const updateRes = await updateProfilePhoto(res.data.secure_url)
+	const closeSheet = () => {
+		bottomSheetRef?.current?.close();
+	};
+	const openSheet = () => {
+		bottomSheetRef?.current?.present();
+		// descInputRef.current.focus();
+	};
 
-    if (!updateRes.ok) {
-      setLoading(false)
-      Alert.alert("Photo updated  failed", updateRes.error.message, [{ text: "ok" }], { cancelable: true })
-      return
-    }
-    // console.log(updateRes);
+	const renderBackdrop = useCallback(
+		(props: any) => (
+			<BottomSheetBackdrop
+				appearsOnIndex={0}
+				disappearsOnIndex={-1}
+				{...props}
+			/>
+		),
+		[]
+	);
+	const pickers = [
+		{
+			title: "galary",
+			onPress: pickImage,
+			icon: "image",
+		},
+		{
+			title: "camera",
+			onPress: pickCameraImage,
+			icon: "camera",
+		},
+	];
+	return (
+		<BottomSheetModalProvider>
+			<View
+				style={{
+					flexDirection: "column",
+					alignItems: "center",
+					marginBottom: 30,
+					marginTop: 40,
+				}}
+			>
+				{image || user.profile_photo ? (
+					<View style={{ position: "relative" }}>
+						<Pressable
+							onPress={() =>
+								navigation.navigate("avatar-modal", {
+									imageUrl: image || user.profile_photo,
+									item: image || user.profile_photo,
+								})
+							}
+						>
+							<Animated.Image
+								source={{ uri: image || user.profile_photo }}
+								// sharedTransitionTag="tag"
+								style={{ width: 150, height: 150, borderRadius: 75 }}
+							/>
+							{/* <SharedElement id={`item.photo`}>
+							<Avatar.Image
+								size={150}
+								source={{ uri: image || user.profile_photo }}
+							/>
+						</SharedElement> */}
+						</Pressable>
+						{loading && (
+							<ActivityIndicator
+								size={150}
+								style={{ position: "absolute", top: 0, left: 0 }}
+							/>
+						)}
+					</View>
+				) : (
+					<Ionicons
+						color={theme.colors.background}
+						style={{
+							color: theme.colors.grey,
+							marginTop: 20,
+						}}
+						size={150}
+						name="person-circle"
+					/>
+				)}
+				<Button
+					disabled={loading}
+					onPress={openSheet}
+					textColor={theme.colors.primaryColor}
+				>
+					<Text> Change Profile Photo</Text>
+				</Button>
+			</View>
+			<BottomSheetModal
+				// enablePanDownToClose
+				ref={bottomSheetRef}
+				backdropComponent={renderBackdrop}
+				index={0}
+				snapPoints={["20%"]}
+				containerStyle={{ zIndex: 1000 }}
+				backgroundStyle={{
+					borderRadius: 0,
+				}}
+			>
+				<Text style={{ textAlign: "center", fontSize: 20, fontWeight: "600" }}>
+					Choose Upload method
+				</Text>
 
-    updateUser(updateRes.data)
-    setLoading(false)
-    ToastAndroid.show("Profile photo updated successfully", ToastAndroid.SHORT)
-  }
-
-
-  return <View
-    style={{
-      flexDirection: "column",
-      alignItems: "center",
-      marginBottom: 30,
-      marginTop: 40,
-    }}
-  >
-    {(image || user.profile_photo) ? (
-      <View style={{ position: "relative" }}>
-        <Avatar.Image size={150} source={{ uri: image || user.profile_photo }} />
-        {loading && <ActivityIndicator size={150} style={{ position: "absolute", top: 0, left: 0, }} />}
-      </View>
-    ) : (
-      <Ionicons
-        color={theme.colors.background}
-        style={{
-          color: theme.colors.grey,
-          marginTop: 20,
-        }}
-        size={150}
-        name="person-circle"
-      />
-    )}
-
-    <Button disabled={loading} onPress={pickImage} textColor={theme.colors.primaryColor}>
-      <Text> Change Profile Photo</Text>
-    </Button>
-  </View>
+				<View
+					style={{
+						flex: 1,
+						flexDirection: "row",
+						justifyContent: "space-evenly",
+						alignItems: "center",
+					}}
+				>
+					{pickers.map(({ icon, onPress }, key) => (
+						<Pressable
+							key={key}
+							onPress={() => {
+								closeSheet();
+								onPress();
+							}}
+						>
+							<Ionicons
+								name={icon as any}
+								color={theme.colors.primaryColor}
+								size={70}
+							/>
+						</Pressable>
+					))}
+				</View>
+			</BottomSheetModal>
+		</BottomSheetModalProvider>
+	);
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  image: {
-    width: 200,
-    height: 200,
-  },
-});
+type TProps = {
+	imageUrl: string;
+};

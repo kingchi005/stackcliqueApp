@@ -6,6 +6,7 @@ import {
 	Text,
 	ToastAndroid,
 	View,
+	Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -72,7 +73,9 @@ export default function CourseDetailsScreen() {
 		}
 		// console.log("res", JSON.stringify(res, null, 2));
 		fetchCourseDetails();
-		ToastAndroid.show("Enrolled Successfully", ToastAndroid.SHORT);
+		if (Platform.OS == "android")
+			ToastAndroid.show("Enrolled Successfully", ToastAndroid.SHORT);
+		else Alert.alert("Enrolled Successfully");
 	};
 	return (
 		<View style={{ flex: 1, paddingHorizontal: 10.08 }}>

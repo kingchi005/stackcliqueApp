@@ -109,7 +109,9 @@ export default function ConnectScreen() {
 			return;
 		}
 		closeSheet();
-		ToastAndroid.show(res.message, ToastAndroid.SHORT);
+		if (Platform.OS == "android")
+			ToastAndroid.show(res.message, ToastAndroid.SHORT);
+		else Alert.alert(res.message);
 		fetchChannels();
 	};
 

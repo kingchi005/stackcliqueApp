@@ -13,6 +13,7 @@ import {
 	Text,
 	TextInput as TextInput_,
 	View,
+	Pressable,
 } from "react-native";
 import {
 	Avatar,
@@ -28,12 +29,14 @@ import { theme } from "../components/theme/theme";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useCacheStore } from "../store/cacheStore";
 import { useUserStore } from "../store/userStore";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ChannelProfileScreen({ route }) {
 	const userId = useUserStore((st) => st.id);
 	const [recieveNotify, setRecieveNotify] = useState(false);
 	const [description, setDescription] = useState("");
 	const channel = useCacheStore.getState().getChannel(route.params.channel_id);
+	const navigation = useNavigation();
 
 	const channelMembers = (function youFirst(id, members) {
 		const you = members.find((me) => me.id == id);
@@ -192,7 +195,20 @@ export default function ChannelProfileScreen({ route }) {
 							}}
 						>
 							{item.profile_photo ? (
-								<Avatar.Image size={35} source={{ uri: item.profile_photo }} />
+								<>
+									<Pressable
+										onPress={() =>
+											navigation.navigate("avatar-modal", {
+												imageUrl: item.profile_photo,
+											})
+										}
+									>
+										<Avatar.Image
+											size={35}
+											source={{ uri: item.profile_photo }}
+										/>
+									</Pressable>
+								</>
 							) : (
 								<Ionicons
 									color={theme.colors.background}

@@ -36,7 +36,7 @@ type TUser = {
 	phone_number?: string;
 	date_of_birth?: Date;
 	address?: string;
-	level: 0;
+	level: number;
 	notifications: any[];
 	profile_photo: string;
 	cover_photo: string;
